@@ -535,8 +535,8 @@
       state.remaining--;
       updateDisplay();
 
-      // bips de décompte sur les 3 dernières secondes de chaque phase (sauf phase "ready")
-      if (state.phase !== 'ready' && state.remaining > 0 && state.remaining <= 3) {
+      // bips de décompte sur les 3 dernières secondes de chaque phase (y compris "PRÊT?")
+      if (state.remaining > 0 && state.remaining <= 3) {
         beepCountdown();
         timeDisplay.classList.remove('pulse');
         void timeDisplay.offsetWidth;
