@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHRONO — Entraînement par intervalles</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Archivo:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --line: #262626;
+    --text: #f5f5f5;
+    --muted: #737373;
+    --work: #eaff00;
+    --rest: #00d9ff;
+    --ready: #ff3e3e;
+    --done: #00ff88;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Archivo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--text);
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 8vw, 56px);
+    letter-spacing: 0.02em;
+    line-height: 0.9;
+  }
+
+  .logo span {
+    color: var(--work);
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  /* ---------- CONFIG ---------- */
+  .config {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 24px;
+  }
+
+  .config-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .config-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--work);
+    display: inline-block;
+  }
+
+  .field {
+    border-top: 1px solid var(--line);
+    padding: 18px 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .field:last-of-type { border-bottom: 1px solid var(--line); }
+
+  .field-label {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-sub {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--text);
+  }
+
+  .stepper button {
+    background: transparent;
+    color: var(--text);
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .stepper button:hover { background: var(--text); color: var(--bg); }
+  .stepper button:active { transform: scale(0.95); }
+
+  .stepper input {
+    width: 70px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--text);
+    border-right: 1px solid var(--text);
+    color: var(--text);
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+  }
+
+  .stepper input:focus { outline: none; background: rgba(234,255,0,0.05); }
+
+  .totals {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .totals strong { color: var(--text); font-weight: 700; }
+
+  .start-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 22px;
+    background: var(--work);
+    color: var(--bg);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .start-btn:hover { background: var(--text); }
+  .start-btn:active { transform: translateY(2px); }
+
+  /* ---------- TIMER VIEW ---------- */
+  .timer-view {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .timer-view.active { display: block; }
+  .container.running .config { display: none; }
+
+  .phase-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 14vw, 100px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+
+  .phase-work { color: var(--work); }
+  .phase-rest { color: var(--rest); }
+  .phase-ready { color: var(--ready); }
+  .phase-done { color: var(--done); }
+
+  .rep-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .rep-counter strong { color: var(--text); font-size: 18px; }
+
+  .time-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(140px, 38vw, 260px);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    margin: 20px 0 30px;
+    transition: transform 0.1s;
+  }
+
+  .time-display.pulse { animation: pulse 0.5s ease; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--line);
+    position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--text);
+    width: 0%;
+    transition: width 0.3s linear;
+  }
+
+  .phase-work ~ .progress-bar .progress-fill,
+  .progress-fill.work { background: var(--work); }
+  .progress-fill.rest { background: var(--rest); }
+  .progress-fill.ready { background: var(--ready); }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .ctrl-btn {
+    padding: 18px;
+    background: transparent;
+    color: var(--text);
+    border: 2px solid var(--text);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .ctrl-btn:hover { background: var(--text); color: var(--bg); }
+  .ctrl-btn.danger { border-color: var(--ready); color: var(--ready); }
+  .ctrl-btn.danger:hover { background: var(--ready); color: var(--bg); }
+
+  .done-screen {
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .done-screen h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 18vw, 140px);
+    color: var(--done);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .done-screen p {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    margin-top: 16px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 480px) {
+    .field { grid-template-columns: 1fr; }
+    .stepper { justify-self: start; }
+  }
+</style>
+</head>
+<body>
+<div class="container" id="container">
+
+  <header>
+    <div class="logo">CHRONO<span>.</span></div>
+    <div class="tag">Interval Trainer</div>
+  </header>
+
+  <!-- CONFIGURATION -->
+  <section class="config" id="config">
+    <div class="config-title">Paramètres de séance</div>
+
+    <div class="field">
+      <div>
+        <div class="field-label">Répétitions</div>
+        <span class="field-sub">Nombre de séries</span>
+      </div>
+      <div class="stepper">
+        <button onclick="adjust('reps', -1)">−</button>
+        <input type="number" id="reps" value="8" min="1" max="99">
+        <button onclick="adjust('reps', 1)">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div>
+        <div class="field-label">Travail</div>
+        <span class="field-sub">Secondes d'effort</span>
+      </div>
+      <div class="stepper">
+        <button onclick="adjust('work', -5)">−</button>
+        <input type="number" id="work" value="30" min="1" max="999">
+        <button onclick="adjust('work', 5)">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div>
+        <div class="field-label">Récupération</div>
+        <span class="field-sub">Secondes de repos</span>
+      </div>
+      <div class="stepper">
+        <button onclick="adjust('rest', -5)">−</button>
+        <input type="number" id="rest" value="15" min="0" max="999">
+        <button onclick="adjust('rest', 5)">+</button>
+      </div>
+    </div>
+
+    <div class="totals">
+      <span>Durée totale → <strong id="total">—</strong></span>
+      <span id="summary">—</span>
+    </div>
+
+    <button class="start-btn" onclick="start()">▶ Démarrer la séance</button>
+  </section>
+
+  <!-- TIMER -->
+  <section class="timer-view" id="timerView">
+    <div class="phase-label phase-ready" id="phaseLabel">PRÊT ?</div>
+    <div class="rep-counter">Série <strong id="repCurrent">0</strong> / <strong id="repTotal">0</strong></div>
+    <div class="time-display" id="timeDisplay">3</div>
+    <div class="progress-bar"><div class="progress-fill ready" id="progressFill"></div></div>
+    <div class="controls">
+      <button class="ctrl-btn" id="pauseBtn" onclick="togglePause()">PAUSE</button>
+      <button class="ctrl-btn danger" onclick="stopSession()">ARRÊTER</button>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section class="timer-view" id="doneView">
+    <div class="done-screen">
+      <h2>TERMINÉ</h2>
+      <p>Bien joué. Séance complétée.</p>
+      <button class="start-btn" style="margin-top:32px" onclick="reset()">↻ Nouvelle séance</button>
+    </div>
+  </section>
+
+  <footer>&copy; Chrono — Entraînement par intervalles</footer>
+</div>
+
+<script>
+  // ---------- CONFIG LOGIC ----------
+  const inputs = { reps: document.getElementById('reps'), work: document.getElementById('work'), rest: document.getElementById('rest') };
+  const totalEl = document.getElementById('total');
+  const summaryEl = document.getElementById('summary');
+
+  function adjust(key, delta) {
+    const el = inputs[key];
+    const min = parseInt(el.min);
+    const max = parseInt(el.max);
+    let v = parseInt(el.value) || 0;
+    v = Math.max(min, Math.min(max, v + delta));
+    el.value = v;
+    updateTotals();
+  }
+
+  function fmtTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return m > 0 ? `${m}m ${sec.toString().padStart(2,'0')}s` : `${sec}s`;
+  }
+
+  function updateTotals() {
+    const r = parseInt(inputs.reps.value) || 0;
+    const w = parseInt(inputs.work.value) || 0;
+    const rest = parseInt(inputs.rest.value) || 0;
+    const total = r * w + Math.max(0, r - 1) * rest;
+    totalEl.textContent = fmtTime(total);
+    summaryEl.textContent = `${r}× (${w}s / ${rest}s)`;
+  }
+  Object.values(inputs).forEach(i => i.addEventListener('input', updateTotals));
+  updateTotals();
+
+  // ---------- AUDIO ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function beep(freq = 880, duration = 0.15, type = 'sine', volume = 0.3) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function beepCountdown() { beep(660, 0.12, 'square', 0.25); }     // court, pour le 3-2-1
+  function beepWorkStart() { beep(1000, 0.25, 'square', 0.35); setTimeout(() => beep(1200, 0.3, 'square', 0.35), 180); }
+  function beepRestStart() { beep(520, 0.4, 'sine', 0.3); }
+  function beepFinish() {
+    beep(880, 0.2, 'square', 0.35);
+    setTimeout(() => beep(1100, 0.2, 'square', 0.35), 220);
+    setTimeout(() => beep(1400, 0.45, 'square', 0.35), 440);
+  }
+
+  // ---------- TIMER STATE ----------
+  const container = document.getElementById('container');
+  const configEl = document.getElementById('config');
+  const timerView = document.getElementById('timerView');
+  const doneView = document.getElementById('doneView');
+  const phaseLabel = document.getElementById('phaseLabel');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const progressFill = document.getElementById('progressFill');
+  const repCurrent = document.getElementById('repCurrent');
+  const repTotal = document.getElementById('repTotal');
+  const pauseBtn = document.getElementById('pauseBtn');
+
+  let state = {
+    reps: 0, workDur: 0, restDur: 0,
+    currentRep: 0, phase: null, remaining: 0, phaseTotal: 0,
+    interval: null, paused: false
+  };
+
+  function start() {
+    ensureAudio();
+    state.reps = parseInt(inputs.reps.value) || 1;
+    state.workDur = parseInt(inputs.work.value) || 1;
+    state.restDur = parseInt(inputs.rest.value) || 0;
+    state.currentRep = 0;
+    state.paused = false;
+    pauseBtn.textContent = 'PAUSE';
+
+    container.classList.add('running');
+    timerView.classList.add('active');
+    doneView.classList.remove('active');
+    repTotal.textContent = state.reps;
+
+    setPhase('ready', 3);
+    runTimer();
+  }
+
+  function setPhase(phase, duration) {
+    state.phase = phase;
+    state.remaining = duration;
+    state.phaseTotal = duration;
+
+    phaseLabel.className = 'phase-label phase-' + phase;
+    progressFill.className = 'progress-fill ' + phase;
+
+    if (phase === 'ready') phaseLabel.textContent = 'PRÊT ?';
+    if (phase === 'work') { phaseLabel.textContent = 'GO !'; repCurrent.textContent = state.currentRep; }
+    if (phase === 'rest') phaseLabel.textContent = 'REPOS';
+
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    timeDisplay.textContent = state.remaining;
+    const pct = state.phaseTotal > 0 ? ((state.phaseTotal - state.remaining) / state.phaseTotal) * 100 : 0;
+    progressFill.style.width = pct + '%';
+  }
+
+  function runTimer() {
+    clearInterval(state.interval);
+    state.interval = setInterval(() => {
+      if (state.paused) return;
+      state.remaining--;
+      updateDisplay();
+
+      // bips de décompte sur les 3 dernières secondes de chaque phase (sauf phase "ready")
+      if (state.phase !== 'ready' && state.remaining > 0 && state.remaining <= 3) {
+        beepCountdown();
+        timeDisplay.classList.remove('pulse');
+        void timeDisplay.offsetWidth;
+        timeDisplay.classList.add('pulse');
+      }
+
+      if (state.remaining <= 0) {
+        advancePhase();
+      }
+    }, 1000);
+  }
+
+  function advancePhase() {
+    if (state.phase === 'ready') {
+      state.currentRep = 1;
+      beepWorkStart();
+      setPhase('work', state.workDur);
+      return;
+    }
+    if (state.phase === 'work') {
+      if (state.currentRep >= state.reps) {
+        finishSession();
+        return;
+      }
+      if (state.restDur > 0) {
+        beepRestStart();
+        setPhase('rest', state.restDur);
+      } else {
+        state.currentRep++;
+        beepWorkStart();
+        setPhase('work', state.workDur);
+      }
+      return;
+    }
+    if (state.phase === 'rest') {
+      state.currentRep++;
+      beepWorkStart();
+      setPhase('work', state.workDur);
+      return;
+    }
+  }
+
+  function finishSession() {
+    clearInterval(state.interval);
+    beepFinish();
+    timerView.classList.remove('active');
+    doneView.classList.add('active');
+  }
+
+  function togglePause() {
+    state.paused = !state.paused;
+    pauseBtn.textContent = state.paused ? 'REPRENDRE' : 'PAUSE';
+  }
+
+  function stopSession() {
+    if (!confirm('Arrêter la séance en cours ?')) return;
+    clearInterval(state.interval);
+    reset();
+  }
+
+  function reset() {
+    container.classList.remove('running');
+    timerView.classList.remove('active');
+    doneView.classList.remove('active');
+    configEl.style.display = '';
+  }
+
+  // Empêche le téléphone de se mettre en veille pendant l'entraînement (si supporté)
+  let wakeLock = null;
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && container.classList.contains('running')) requestWakeLock();
+  });
+  document.querySelector('.start-btn').addEventListener('click', requestWakeLock);
+</script>
+</body>
+</html>
