@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CHRONO — Programme fitness</title>
+<title>CHRONO — Programme fitness maison</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Archivo:wght@400;600;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -276,17 +276,67 @@
     padding: 16px 18px;
     margin-bottom: 10px;
     display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 14px;
+    grid-template-columns: 72px 1fr;
+    gap: 16px;
     align-items: start;
   }
 
-  .exercise .num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    line-height: 1;
-    color: var(--muted);
+  .exercise .icon-box {
+    width: 72px;
+    height: 72px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
+  .exercise .icon-box .num {
+    position: absolute;
+    top: 3px; left: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .ex-svg {
+    width: 58px;
+    height: 58px;
+    stroke: var(--text);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+  .ex-svg .mat { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 2 2; }
+  .ex-svg .wt { fill: var(--work); stroke: none; }
+  .ex-svg .wt-fill { fill: var(--work); stroke: var(--work); }
+  [data-seance="B"] .ex-svg .wt, [data-seance="B"] .ex-svg .wt-fill { fill: var(--rest); stroke: var(--rest); }
+  [data-seance="C"] .ex-svg .wt, [data-seance="C"] .ex-svg .wt-fill { fill: var(--ready); stroke: var(--ready); }
+
+  .exo-card .icon-big {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .exo-card .icon-big .ex-svg { width: 84px; height: 84px; }
+
+  .equipment-banner {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--work);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+  }
+  .equipment-banner strong { color: var(--text); letter-spacing: 0.12em; }
 
   .exercise .name {
     font-family: 'Archivo', sans-serif;
@@ -635,11 +685,15 @@
 
   <header>
     <div class="logo" onclick="goHome()">CHRONO<span>.</span></div>
-    <div class="tag" id="headerTag">Programme fitness</div>
+    <div class="tag" id="headerTag">Programme maison</div>
   </header>
 
   <!-- ======= VIEW: HOME ======= -->
   <section class="view active" id="viewHome">
+    <div class="equipment-banner">
+      <strong>MATÉRIEL</strong> · Entraînement à la maison — petites haltères (4 à 16 kg),
+      un tapis, éventuellement une kettlebell et un élastique. Pas besoin de salle.
+    </div>
     <div class="section-title">Ton programme — Choisis ta séance</div>
     <div class="program-grid" id="programGrid"></div>
 
@@ -734,6 +788,7 @@
     <div class="phase-label phase-ready" id="phaseLabel">PRÊT ?</div>
 
     <div class="exo-card" id="exoCard">
+      <div class="icon-big" id="exoIcon"></div>
       <div class="exo-name" id="exoName">—</div>
       <div class="exo-charge" id="exoCharge" style="display:none;">—</div>
       <div class="exo-desc" id="exoDesc">—</div>
@@ -802,7 +857,28 @@
 
 <script>
   // =========================================================
-  // DATA — PROGRAMME
+  // ICONS — pictogrammes SVG inline (stroke = couleur accent séance)
+  // =========================================================
+  const ICONS = {
+    squat: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="8" y1="92" x2="92" y2="92"/><circle cx="50" cy="16" r="6"/><path d="M50 22 L48 48"/><path d="M48 48 L36 68 L36 88"/><path d="M48 48 L60 68 L60 88"/><path d="M48 30 L30 50"/><path d="M48 30 L66 50"/><rect class="wt" x="22" y="46" width="14" height="7"/><rect class="wt" x="62" y="46" width="14" height="7"/></svg>`,
+    hipthrust: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="15" cy="74" r="6"/><path d="M22 72 L60 48"/><path d="M60 48 L75 68"/><path d="M75 68 L75 88"/><rect class="wt" x="50" y="40" width="20" height="7"/></svg>`,
+    lunge: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="48" cy="18" r="6"/><path d="M48 24 L48 54"/><path d="M48 54 L42 74 L42 88"/><path d="M48 54 L68 78 L78 88"/><path d="M46 32 L30 52"/><path d="M50 32 L66 52"/><rect class="wt" x="22" y="48" width="12" height="7"/><rect class="wt" x="62" y="48" width="12" height="7"/></svg>`,
+    deadlift: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="66" cy="22" r="6"/><path d="M61 26 L42 52"/><path d="M42 52 L40 88"/><path d="M42 52 L50 88"/><path d="M44 50 L44 76"/><circle class="wt-fill" cx="44" cy="82" r="7"/><path d="M40 76 Q44 70 48 76" stroke="currentColor"/></svg>`,
+    deadbug: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="88" x2="95" y2="88"/><circle cx="18" cy="68" r="6"/><path d="M24 68 L70 68"/><path d="M38 68 L32 82"/><path d="M52 68 L52 38"/><path d="M70 68 L76 38"/><path d="M70 68 L80 78 L74 86"/></svg>`,
+    row: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="22" cy="30" r="6"/><path d="M28 33 L66 40"/><path d="M66 40 L68 88"/><path d="M66 40 L76 88"/><path d="M48 38 L48 58"/><path d="M48 58 L58 48"/><rect class="wt" x="44" y="54" width="14" height="7" transform="rotate(-35 51 57)"/></svg>`,
+    press: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="34" r="6"/><path d="M50 40 L50 64"/><path d="M50 64 L42 88"/><path d="M50 64 L58 88"/><path d="M44 42 L36 18"/><path d="M56 42 L64 18"/><rect class="wt" x="26" y="12" width="18" height="7"/><rect class="wt" x="56" y="12" width="18" height="7"/><path d="M22 58 L22 36" stroke-dasharray="3 3" opacity="0.5"/><path d="M78 58 L78 36" stroke-dasharray="3 3" opacity="0.5"/></svg>`,
+    curl: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="18" r="6"/><path d="M50 24 L50 58"/><path d="M50 58 L42 88"/><path d="M50 58 L58 88"/><path d="M44 30 L38 50"/><path d="M56 30 L62 50"/><path d="M38 50 L46 32"/><path d="M62 50 L54 32"/><rect class="wt" x="36" y="26" width="14" height="7"/><rect class="wt" x="50" y="26" width="14" height="7"/></svg>`,
+    triceps: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="24" r="6"/><path d="M50 30 L50 60"/><path d="M50 60 L42 88"/><path d="M50 60 L58 88"/><path d="M46 32 L50 14"/><path d="M50 14 L54 32"/><rect class="wt" x="40" y="6" width="20" height="8"/></svg>`,
+    plank: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="86" x2="95" y2="86"/><circle cx="16" cy="56" r="6"/><path d="M22 58 L72 74"/><path d="M28 60 L28 80"/><circle class="wt-fill" cx="70" cy="80" r="4"/><path d="M70 80 L88 84"/></svg>`,
+    swing: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="38" cy="22" r="6"/><path d="M38 28 L44 58"/><path d="M44 58 L36 88"/><path d="M44 58 L54 88"/><path d="M40 34 L72 42"/><circle class="wt-fill" cx="78" cy="44" r="7"/><path d="M76 38 Q80 34 82 38" stroke="currentColor" fill="none" stroke-width="1.5"/><path d="M26 66 Q45 34 76 44" stroke-dasharray="3 3" opacity="0.5"/></svg>`,
+    squatpress: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="30" r="6"/><path d="M50 36 L50 62"/><path d="M50 62 L42 88"/><path d="M50 62 L58 88"/><path d="M46 38 L40 16"/><path d="M54 38 L60 16"/><rect class="wt" x="30" y="10" width="16" height="7"/><rect class="wt" x="54" y="10" width="16" height="7"/><path d="M22 58 L22 34" stroke-dasharray="3 3" opacity="0.6"/><path d="M78 58 L78 34" stroke-dasharray="3 3" opacity="0.6"/></svg>`,
+    band: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="26" cy="22" r="6"/><path d="M26 28 L26 58"/><path d="M26 58 L20 88"/><path d="M26 58 L32 88"/><path d="M26 36 L52 42"/><path d="M52 42 Q62 34 70 44 T 88 38" stroke-dasharray="2 2"/><rect class="wt" x="86" y="34" width="6" height="14"/></svg>`,
+    stepup: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><rect class="wt" x="56" y="66" width="34" height="22" opacity="0.3"/><rect x="56" y="66" width="34" height="22" stroke="currentColor" fill="none"/><circle cx="38" cy="22" r="6"/><path d="M38 28 L38 58"/><path d="M38 58 L58 66"/><path d="M38 58 L34 88"/><path d="M36 36 L26 56"/><path d="M40 36 L48 56"/></svg>`,
+    farmer: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="16" r="6"/><path d="M50 22 L50 58"/><path d="M50 58 L44 88"/><path d="M50 58 L56 88"/><path d="M46 28 L36 60"/><path d="M54 28 L64 60"/><rect class="wt" x="28" y="56" width="16" height="10"/><rect class="wt" x="56" y="56" width="16" height="10"/></svg>`,
+  };
+
+  // =========================================================
+  // DATA — PROGRAMME (maison · haltères + tapis)
   // =========================================================
   const PROGRAMS = {
     A: {
@@ -810,11 +886,11 @@
       title: 'Bas du corps + ventre profond',
       color: 'var(--accent-a)',
       exercises: [
-        { name: 'Squat haltères',      desc: "Descends comme pour t'asseoir, remonte en poussant sur les talons.", charge: '2 × 6–8 kg' },
-        { name: 'Hip thrust',          desc: 'Au sol, monte les hanches en contractant les fessiers.',              charge: '10–16 kg sur le bassin' },
-        { name: 'Fentes arrière',      desc: 'Recule une jambe et descends, buste droit.',                          charge: '2 × 5–7 kg' },
-        { name: 'Deadlift kettlebell', desc: 'Penche le buste, dos droit, remonte en poussant les hanches.',        charge: '10–14 kg' },
-        { name: 'Dead bug',            desc: 'Bras et jambes alternés lentement, ventre rentré, bas du dos collé.', charge: 'Poids du corps' },
+        { name: 'Squat haltères',      icon: ICONS.squat,    desc: "Debout, pieds largeur bassin. Descends comme pour t'asseoir, talons au sol, remonte en poussant sur les talons.", charge: '2 × 6–8 kg' },
+        { name: 'Hip thrust',          icon: ICONS.hipthrust, desc: 'Sur le tapis, dos au sol, pieds à plat. Monte les hanches en contractant les fessiers, pose une haltère sur le bassin.', charge: '10–16 kg sur le bassin' },
+        { name: 'Fentes arrière',      icon: ICONS.lunge,    desc: 'Debout, haltères le long du corps. Recule une jambe et descends le genou arrière vers le sol, buste droit. Alterne.', charge: '2 × 5–7 kg' },
+        { name: 'Deadlift kettlebell', icon: ICONS.deadlift, desc: 'Kettlebell au sol entre les pieds. Penche le buste, dos droit, remonte en poussant le sol et les hanches vers l\'avant.', charge: '10–14 kg' },
+        { name: 'Dead bug',            icon: ICONS.deadbug,  desc: 'Allongé sur le dos, bras et jambes en l\'air. Tends lentement bras droit + jambe gauche, retour, puis l\'inverse. Ventre rentré.', charge: 'Poids du corps' },
       ]
     },
     B: {
@@ -822,11 +898,11 @@
       title: 'Haut du corps + gainage',
       color: 'var(--accent-b)',
       exercises: [
-        { name: 'Rowing haltères',   desc: 'Dos à plat, tire les haltères vers le nombril, coudes près du corps.', charge: '2 × 6–8 kg' },
-        { name: 'Développé épaules', desc: 'Pousse au-dessus de la tête sans cambrer, gainage actif.',             charge: '2 × 4–6 kg' },
-        { name: 'Curl biceps',       desc: 'Monte les haltères sans bouger les coudes, contrôle la descente.',     charge: '2 × 4–6 kg' },
-        { name: 'Extension triceps', desc: 'Haltère derrière la tête, tends les bras vers le plafond.',            charge: '6–8 kg' },
-        { name: 'Planche genoux',    desc: 'Gainage ventre rentré, dos droit, fessiers serrés.',                   charge: 'Poids du corps' },
+        { name: 'Rowing haltères',   icon: ICONS.row,     desc: 'Buste penché en avant, dos plat, haltères dans les mains. Tire-les vers le nombril en serrant les omoplates.', charge: '2 × 6–8 kg' },
+        { name: 'Développé épaules', icon: ICONS.press,   desc: 'Assis ou debout, haltères aux épaules. Pousse-les au-dessus de la tête sans cambrer le dos, gainage actif.', charge: '2 × 4–6 kg' },
+        { name: 'Curl biceps',       icon: ICONS.curl,    desc: 'Debout, bras le long du corps. Monte les haltères en pliant les coudes, sans bouger les bras. Contrôle la descente.', charge: '2 × 4–6 kg' },
+        { name: 'Extension triceps', icon: ICONS.triceps, desc: 'Une haltère tenue à deux mains derrière la tête, coudes hauts. Tends les bras vers le plafond, puis redescends.', charge: '6–8 kg' },
+        { name: 'Planche genoux',    icon: ICONS.plank,   desc: 'Sur le tapis, appuie-toi sur les avant-bras et les genoux. Ligne droite des épaules aux genoux, ventre rentré.', charge: 'Poids du corps' },
       ]
     },
     C: {
@@ -834,11 +910,11 @@
       title: 'Full body brûle graisse',
       color: 'var(--accent-c)',
       exercises: [
-        { name: 'Swing kettlebell',  desc: 'Balance la kettlebell avec les hanches, pas avec les bras.',          charge: '8–12 kg' },
-        { name: 'Squat + presse',    desc: 'Squat, puis pousse les haltères au-dessus de la tête en remontant.',  charge: '2 × 4–6 kg' },
-        { name: 'Tirage élastique',  desc: "Fixe l'élastique, tire vers toi en rapprochant les omoplates.",       charge: 'Résistance moyenne' },
-        { name: 'Step-up',           desc: 'Monte sur une chaise ou un step puis redescends, alterne les jambes.', charge: 'Poids du corps ou 2 × 4 kg' },
-        { name: 'Farmer walk',       desc: 'Marche avec haltères lourds, épaules basses, gainage actif.',         charge: '2 × 8–12 kg' },
+        { name: 'Swing kettlebell',  icon: ICONS.swing,      desc: 'Kettlebell entre les jambes. Balance-la jusqu\'à hauteur des épaules en poussant avec les hanches (pas avec les bras).', charge: '8–12 kg' },
+        { name: 'Squat + presse',    icon: ICONS.squatpress, desc: 'Haltères aux épaules. Descends en squat, puis en remontant pousse les haltères au-dessus de la tête.', charge: '2 × 4–6 kg' },
+        { name: 'Tirage élastique',  icon: ICONS.band,       desc: 'Fixe l\'élastique à une poignée de porte. Tire vers toi en rapprochant les omoplates, coudes près du corps.', charge: 'Résistance moyenne' },
+        { name: 'Step-up',           icon: ICONS.stepup,     desc: 'Devant une chaise solide ou un step. Monte dessus avec une jambe, redescends, alterne. Option haltères dans les mains.', charge: 'Poids du corps ou 2 × 4 kg' },
+        { name: 'Farmer walk',       icon: ICONS.farmer,     desc: 'Haltères lourdes dans chaque main, épaules basses, gainage actif. Marche 30 à 40 secondes, pas de déhanché.', charge: '2 × 8–12 kg' },
       ]
     }
   };
@@ -857,7 +933,7 @@
   function goHome() {
     stopAllTimers();
     showView('viewHome');
-    document.getElementById('headerTag').textContent = 'Programme fitness';
+    document.getElementById('headerTag').textContent = 'Programme maison';
   }
 
   // =========================================================
@@ -896,12 +972,16 @@
     document.getElementById('metaRounds').textContent = FORMAT.rounds;
 
     const list = document.getElementById('exerciseList');
+    list.dataset.seance = id;
     list.innerHTML = '';
     currentProgram.exercises.forEach((e, i) => {
       const div = document.createElement('div');
       div.className = 'exercise';
       div.innerHTML = `
-        <div class="num">${String(i+1).padStart(2,'0')}</div>
+        <div class="icon-box">
+          <span class="num">${String(i+1).padStart(2,'0')}</span>
+          ${e.icon || ''}
+        </div>
         <div>
           <div class="name">${e.name}</div>
           <div class="charge">${e.charge}</div>
@@ -1004,6 +1084,7 @@
   const exoCharge    = document.getElementById('exoCharge');
   const exoDesc      = document.getElementById('exoDesc');
   const exoCard      = document.getElementById('exoCard');
+  const exoIcon      = document.getElementById('exoIcon');
   const upNext       = document.getElementById('upNext');
   const roundCur     = document.getElementById('roundCur');
   const roundTot     = document.getElementById('roundTot');
@@ -1128,16 +1209,21 @@
     progressFill.className = 'progress-fill ' + step.type;
     exoCard.classList.toggle('rest', step.type === 'rest');
 
+    // seance color context for svg weights
+    exoCard.dataset.seance = state.program ? state.program.id : '';
+
     if (step.type === 'ready') {
       phaseLabel.textContent = 'PRÊT ?';
       if (state.mode === 'seance') {
         const first = state.program.exercises[0];
+        exoIcon.innerHTML    = first.icon || '';
         exoName.textContent  = 'À suivre : ' + first.name;
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = first.charge;
         exoDesc.textContent = first.desc;
         upNext.innerHTML = `Tour <strong>1</strong> — 1er exercice dans 3…`;
       } else {
+        exoIcon.innerHTML    = '';
         exoName.textContent  = 'Préparez-vous';
         exoCharge.style.display = 'none';
         exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
@@ -1149,12 +1235,12 @@
       phaseLabel.textContent = 'GO !';
       beepWorkStart();
       if (step.exo) {
+        exoIcon.innerHTML    = step.exo.icon || '';
         exoName.textContent  = step.exo.name;
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = step.exo.charge;
         exoDesc.textContent  = step.exo.desc;
         roundCur.textContent = step.round;
-        // up next
         const next = state.sequence[state.idx + 1];
         if (next && next.type === 'rest' && next.nextExo) {
           upNext.innerHTML = `Suivant : <strong>${next.nextExo.name}</strong>`;
@@ -1164,6 +1250,7 @@
           upNext.innerHTML = '';
         }
       } else if (step.free) {
+        exoIcon.innerHTML    = '';
         exoName.textContent   = 'TRAVAIL';
         exoCharge.style.display = 'none';
         exoDesc.textContent   = `Série ${step.repIndex} / ${step.repTotal}`;
@@ -1176,13 +1263,15 @@
       phaseLabel.textContent = 'REPOS';
       beepRestStart();
       if (step.nextExo) {
+        exoIcon.innerHTML    = step.nextExo.icon || '';
         exoName.textContent  = 'Prochain : ' + step.nextExo.name;
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = step.nextExo.charge;
         exoDesc.textContent  = step.nextExo.desc;
-        upNext.innerHTML = step.nextRound > state.sequence.filter(s=>s.round===step.round).length/2 && step.nextRound !== step.round
+        upNext.innerHTML = step.nextRound !== step.round
           ? `Nouveau tour → <strong>Tour ${step.nextRound}</strong>` : '';
       } else {
+        exoIcon.innerHTML    = '';
         exoName.textContent = 'Récupération';
         exoCharge.style.display = 'none';
         exoDesc.textContent = 'Respire, bois un peu d\'eau.';
