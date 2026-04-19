@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CHRONO — Entraînement par intervalles</title>
+<title>CHRONO — Programme fitness</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Archivo:wght@400;600;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0a0a;
     --surface: #141414;
+    --surface-2: #1c1c1c;
     --line: #262626;
     --text: #f5f5f5;
     --muted: #737373;
@@ -16,9 +17,14 @@
     --rest: #00d9ff;
     --ready: #ff3e3e;
     --done: #00ff88;
+    --accent-a: #eaff00;
+    --accent-b: #00d9ff;
+    --accent-c: #ff3e3e;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
 
   body {
     font-family: 'Archivo', sans-serif;
@@ -33,18 +39,19 @@
   }
 
   .container {
-    max-width: 720px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: 32px 20px 60px;
+    padding: 28px 20px 60px;
   }
 
+  /* ---------- HEADER ---------- */
   header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    padding-bottom: 20px;
+    padding-bottom: 18px;
     border-bottom: 2px solid var(--text);
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .logo {
@@ -52,11 +59,9 @@
     font-size: clamp(36px, 8vw, 56px);
     letter-spacing: 0.02em;
     line-height: 0.9;
+    cursor: pointer;
   }
-
-  .logo span {
-    color: var(--work);
-  }
+  .logo span { color: var(--work); }
 
   .tag {
     font-family: 'JetBrains Mono', monospace;
@@ -66,42 +71,301 @@
     letter-spacing: 0.15em;
   }
 
-  /* ---------- CONFIG ---------- */
-  .config {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    padding: 24px;
+  /* ---------- GENERIC VIEW ---------- */
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  .config-title {
+  .section-title {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--muted);
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
-  .config-title::before {
+  .section-title::before {
     content: '';
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     background: var(--work);
     display: inline-block;
   }
 
+  /* ---------- HOME: PROGRAM CARDS ---------- */
+  .program-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .program-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 22px 20px;
+    text-align: left;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    font-family: inherit;
+  }
+
+  .program-card:hover {
+    border-color: var(--text);
+    transform: translateX(2px);
+  }
+
+  .program-card .badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 0.85;
+    text-align: center;
+    padding: 4px 0;
+    border-right: 1px solid var(--line);
+    padding-right: 8px;
+  }
+
+  .program-card[data-id="A"] .badge { color: var(--accent-a); }
+  .program-card[data-id="B"] .badge { color: var(--accent-b); }
+  .program-card[data-id="C"] .badge { color: var(--accent-c); }
+
+  .program-card .info h3 {
+    font-family: 'Archivo', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .program-card .info p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .program-card .arrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--muted);
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .program-card:hover .arrow { color: var(--text); transform: translateX(3px); }
+
+  .divider-or {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.3em;
+    margin: 24px 0 18px;
+    position: relative;
+  }
+  .divider-or::before, .divider-or::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 40px);
+    height: 1px;
+    background: var(--line);
+  }
+  .divider-or::before { left: 0; }
+  .divider-or::after  { right: 0; }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .secondary-btn:hover { border-color: var(--text); background: var(--surface); }
+
+  /* ---------- SEANCE DETAIL ---------- */
+  .back-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0 0 16px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--text); }
+
+  .seance-header {
+    padding: 20px 0;
+    border-top: 2px solid var(--text);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+
+  .seance-header .code {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 12vw, 84px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+
+  .seance-header .name {
+    font-family: 'Archivo', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  .seance-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .seance-meta .cell {
+    background: var(--surface);
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .seance-meta .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .seance-meta .v {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+
+  .exercise-list { margin-bottom: 24px; }
+
+  .exercise {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .exercise .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--muted);
+  }
+
+  .exercise .name {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  .exercise .charge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--bg);
+    background: var(--work);
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .exercise .desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .finisher-card {
+    border: 1px dashed var(--line);
+    padding: 18px;
+    margin-bottom: 24px;
+  }
+  .finisher-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--done);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .finisher-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 22px;
+    background: var(--work);
+    color: var(--bg);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: var(--text); }
+  .start-btn:active { transform: translateY(2px); }
+
+  .start-btn.b { background: var(--rest); }
+  .start-btn.c { background: var(--ready); color: var(--text); }
+
+  /* ---------- FREE TIMER CONFIG ---------- */
+  .config {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 22px;
+  }
+
   .field {
     border-top: 1px solid var(--line);
-    padding: 18px 0;
+    padding: 16px 0;
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 16px;
   }
-
   .field:last-of-type { border-bottom: 1px solid var(--line); }
 
   .field-label {
@@ -111,7 +375,6 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-
   .field-sub {
     display: block;
     font-weight: 400;
@@ -125,44 +388,30 @@
   .stepper {
     display: flex;
     align-items: center;
-    gap: 0;
     border: 1px solid var(--text);
   }
-
   .stepper button {
-    background: transparent;
-    color: var(--text);
-    border: none;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    font-weight: 900;
-    cursor: pointer;
-    transition: background 0.15s;
+    background: transparent; color: var(--text);
+    border: none; width: 40px; height: 40px;
+    font-size: 18px; font-weight: 900;
+    cursor: pointer; transition: background 0.15s;
   }
-
   .stepper button:hover { background: var(--text); color: var(--bg); }
-  .stepper button:active { transform: scale(0.95); }
-
   .stepper input {
-    width: 70px;
-    height: 40px;
-    background: transparent;
-    border: none;
+    width: 70px; height: 40px;
+    background: transparent; border: none;
     border-left: 1px solid var(--text);
     border-right: 1px solid var(--text);
     color: var(--text);
     text-align: center;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 22px;
-    letter-spacing: 0.05em;
   }
-
   .stepper input:focus { outline: none; background: rgba(234,255,0,0.05); }
 
   .totals {
-    margin-top: 20px;
-    padding-top: 20px;
+    margin-top: 18px;
+    padding-top: 16px;
     border-top: 1px dashed var(--line);
     display: flex;
     justify-content: space-between;
@@ -172,78 +421,81 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
-
   .totals strong { color: var(--text); font-weight: 700; }
 
-  .start-btn {
-    width: 100%;
-    margin-top: 24px;
-    padding: 22px;
-    background: var(--work);
-    color: var(--bg);
-    border: none;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .start-btn:hover { background: var(--text); }
-  .start-btn:active { transform: translateY(2px); }
-
-  /* ---------- TIMER VIEW ---------- */
-  .timer-view {
-    display: none;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .timer-view.active { display: block; }
-  .container.running .config { display: none; }
-
-  .phase-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(60px, 14vw, 100px);
-    letter-spacing: 0.08em;
-    line-height: 1;
-    margin-bottom: 8px;
-    transition: color 0.3s;
-  }
-
-  .phase-work { color: var(--work); }
-  .phase-rest { color: var(--rest); }
-  .phase-ready { color: var(--ready); }
-  .phase-done { color: var(--done); }
-
-  .rep-counter {
+  /* ---------- ACTIVE WORKOUT ---------- */
+  .active-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    font-size: 11px;
     color: var(--muted);
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
   }
+  .active-head strong { color: var(--text); font-weight: 700; }
 
-  .rep-counter strong { color: var(--text); font-size: 18px; }
+  .phase-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 12vw, 88px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-align: center;
+    transition: color 0.3s;
+  }
+  .phase-work  { color: var(--work); }
+  .phase-rest  { color: var(--rest); }
+  .phase-ready { color: var(--ready); }
+  .phase-done  { color: var(--done); }
+
+  .exo-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 18px;
+    margin: 14px 0 8px;
+    text-align: center;
+    min-height: 130px;
+  }
+  .exo-card .exo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(32px, 7vw, 48px);
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .exo-card .exo-charge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--bg);
+    background: var(--work);
+    padding: 3px 10px;
+    letter-spacing: 0.08em;
+    margin: 8px 0 10px;
+  }
+  .exo-card.rest .exo-charge { background: var(--rest); }
+  .exo-card .exo-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
 
   .time-display {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(140px, 38vw, 260px);
+    font-size: clamp(120px, 32vw, 220px);
     line-height: 0.85;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
-    margin: 20px 0 30px;
+    text-align: center;
+    margin: 14px 0 18px;
     transition: transform 0.1s;
   }
-
   .time-display.pulse { animation: pulse 0.5s ease; }
 
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.06); }
   }
 
   .progress-bar {
@@ -251,28 +503,37 @@
     height: 8px;
     background: var(--line);
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 22px;
     overflow: hidden;
   }
-
   .progress-fill {
     height: 100%;
     background: var(--text);
     width: 0%;
     transition: width 0.3s linear;
   }
-
-  .phase-work ~ .progress-bar .progress-fill,
-  .progress-fill.work { background: var(--work); }
-  .progress-fill.rest { background: var(--rest); }
+  .progress-fill.work  { background: var(--work); }
+  .progress-fill.rest  { background: var(--rest); }
   .progress-fill.ready { background: var(--ready); }
+  .progress-fill.done  { background: var(--done); }
+
+  .up-next {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 18px;
+    min-height: 16px;
+  }
+  .up-next strong { color: var(--text); }
 
   .controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-
   .ctrl-btn {
     padding: 18px;
     background: transparent;
@@ -284,32 +545,70 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-
   .ctrl-btn:hover { background: var(--text); color: var(--bg); }
   .ctrl-btn.danger { border-color: var(--ready); color: var(--ready); }
   .ctrl-btn.danger:hover { background: var(--ready); color: var(--bg); }
 
-  .done-screen {
-    text-align: center;
-    padding: 40px 0;
-  }
-
-  .done-screen h2 {
+  /* ---------- DONE / FINISHER ---------- */
+  .big-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(80px, 18vw, 140px);
-    color: var(--done);
-    letter-spacing: 0.05em;
+    font-size: clamp(70px, 16vw, 120px);
     line-height: 1;
+    text-align: center;
+    letter-spacing: 0.04em;
   }
+  .big-title.done { color: var(--done); }
 
-  .done-screen p {
+  .lead {
     font-family: 'JetBrains Mono', monospace;
     color: var(--muted);
-    margin-top: 16px;
+    text-align: center;
+    margin-top: 14px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     font-size: 13px;
   }
+
+  .finisher-steps {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 20px;
+    margin: 22px 0;
+  }
+  .finisher-steps li {
+    list-style: none;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .finisher-steps li:last-child { border-bottom: none; }
+  .finisher-steps li .mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--done);
+  }
+
+  .breath-circle {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 2px solid var(--done);
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.08em;
+    color: var(--done);
+    transition: transform 4s cubic-bezier(0.45, 0, 0.55, 1), background 0.4s;
+    transform: scale(0.6);
+  }
+  .breath-circle.in  { transform: scale(1); background: rgba(0,255,136,0.08); }
+  .breath-circle.out { transform: scale(0.6); background: transparent; }
 
   footer {
     text-align: center;
@@ -324,103 +623,325 @@
   @media (max-width: 480px) {
     .field { grid-template-columns: 1fr; }
     .stepper { justify-self: start; }
+    .program-card { grid-template-columns: 60px 1fr 24px; gap: 12px; padding: 18px 14px; }
+    .program-card .badge { font-size: 44px; }
+    .seance-meta .v { font-size: 22px; }
+    .breath-circle { width: 180px; height: 180px; font-size: 32px; }
   }
 </style>
 </head>
 <body>
-<div class="container" id="container">
+<div class="container">
 
   <header>
-    <div class="logo">CHRONO<span>.</span></div>
-    <div class="tag">Interval Trainer</div>
+    <div class="logo" onclick="goHome()">CHRONO<span>.</span></div>
+    <div class="tag" id="headerTag">Programme fitness</div>
   </header>
 
-  <!-- CONFIGURATION -->
-  <section class="config" id="config">
-    <div class="config-title">Paramètres de séance</div>
+  <!-- ======= VIEW: HOME ======= -->
+  <section class="view active" id="viewHome">
+    <div class="section-title">Ton programme — Choisis ta séance</div>
+    <div class="program-grid" id="programGrid"></div>
 
-    <div class="field">
-      <div>
-        <div class="field-label">Répétitions</div>
-        <span class="field-sub">Nombre de séries</span>
-      </div>
-      <div class="stepper">
-        <button onclick="adjust('reps', -1)">−</button>
-        <input type="number" id="reps" value="8" min="1" max="99">
-        <button onclick="adjust('reps', 1)">+</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <div>
-        <div class="field-label">Travail</div>
-        <span class="field-sub">Secondes d'effort</span>
-      </div>
-      <div class="stepper">
-        <button onclick="adjust('work', -5)">−</button>
-        <input type="number" id="work" value="30" min="1" max="999">
-        <button onclick="adjust('work', 5)">+</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <div>
-        <div class="field-label">Récupération</div>
-        <span class="field-sub">Secondes de repos</span>
-      </div>
-      <div class="stepper">
-        <button onclick="adjust('rest', -5)">−</button>
-        <input type="number" id="rest" value="15" min="0" max="999">
-        <button onclick="adjust('rest', 5)">+</button>
-      </div>
-    </div>
-
-    <div class="totals">
-      <span>Durée totale → <strong id="total">—</strong></span>
-      <span id="summary">—</span>
-    </div>
-
-    <button class="start-btn" onclick="start()">▶ Démarrer la séance</button>
+    <div class="divider-or">OU</div>
+    <button class="secondary-btn" onclick="showView('viewFree')">⏱ Chrono libre (personnalisé)</button>
   </section>
 
-  <!-- TIMER -->
-  <section class="timer-view" id="timerView">
+  <!-- ======= VIEW: SEANCE DETAIL ======= -->
+  <section class="view" id="viewDetail">
+    <button class="back-btn" onclick="goHome()">← Retour</button>
+    <div class="seance-header">
+      <div class="code" id="detailCode">A</div>
+      <div class="name" id="detailName">—</div>
+    </div>
+
+    <div class="seance-meta">
+      <div class="cell"><div class="k">Travail</div><div class="v" id="metaWork">40s</div></div>
+      <div class="cell"><div class="k">Repos</div><div class="v" id="metaRest">20s</div></div>
+      <div class="cell"><div class="k">Tours</div><div class="v" id="metaRounds">3</div></div>
+    </div>
+
+    <div class="section-title">Exercices</div>
+    <div class="exercise-list" id="exerciseList"></div>
+
+    <div class="finisher-card">
+      <h4>● Fin de séance — ventre plat (optionnel)</h4>
+      <p>10 respirations abdominales profondes puis 3 × 20 s de vacuum abdominal.
+      Tu pourras lancer le finisher depuis l'écran final.</p>
+    </div>
+
+    <div class="totals" style="margin-bottom:14px;">
+      <span>Durée estimée → <strong id="estTotal">—</strong></span>
+      <span id="estSummary">—</span>
+    </div>
+
+    <button class="start-btn" id="startSeanceBtn" onclick="startSeance()">▶ Démarrer la séance</button>
+  </section>
+
+  <!-- ======= VIEW: FREE TIMER CONFIG ======= -->
+  <section class="view" id="viewFree">
+    <button class="back-btn" onclick="goHome()">← Retour</button>
+    <section class="config">
+      <div class="section-title">Chrono libre — paramètres</div>
+      <div class="field">
+        <div>
+          <div class="field-label">Répétitions</div>
+          <span class="field-sub">Nombre de séries</span>
+        </div>
+        <div class="stepper">
+          <button onclick="adjust('reps', -1)">−</button>
+          <input type="number" id="reps" value="8" min="1" max="99">
+          <button onclick="adjust('reps', 1)">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <div class="field-label">Travail</div>
+          <span class="field-sub">Secondes d'effort</span>
+        </div>
+        <div class="stepper">
+          <button onclick="adjust('work', -5)">−</button>
+          <input type="number" id="work" value="30" min="1" max="999">
+          <button onclick="adjust('work', 5)">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <div class="field-label">Récupération</div>
+          <span class="field-sub">Secondes de repos</span>
+        </div>
+        <div class="stepper">
+          <button onclick="adjust('rest', -5)">−</button>
+          <input type="number" id="rest" value="15" min="0" max="999">
+          <button onclick="adjust('rest', 5)">+</button>
+        </div>
+      </div>
+      <div class="totals">
+        <span>Durée totale → <strong id="freeTotal">—</strong></span>
+        <span id="freeSummary">—</span>
+      </div>
+      <button class="start-btn" onclick="startFree()" style="margin-top:20px;">▶ Démarrer</button>
+    </section>
+  </section>
+
+  <!-- ======= VIEW: ACTIVE WORKOUT ======= -->
+  <section class="view" id="viewActive">
+    <div class="active-head">
+      <span id="activeHeadLeft">SÉANCE —</span>
+      <span id="activeHeadRight">TOUR <strong id="roundCur">1</strong>/<strong id="roundTot">3</strong></span>
+    </div>
+
     <div class="phase-label phase-ready" id="phaseLabel">PRÊT ?</div>
-    <div class="rep-counter">Série <strong id="repCurrent">0</strong> / <strong id="repTotal">0</strong></div>
+
+    <div class="exo-card" id="exoCard">
+      <div class="exo-name" id="exoName">—</div>
+      <div class="exo-charge" id="exoCharge" style="display:none;">—</div>
+      <div class="exo-desc" id="exoDesc">—</div>
+    </div>
+
     <div class="time-display" id="timeDisplay">3</div>
     <div class="progress-bar"><div class="progress-fill ready" id="progressFill"></div></div>
+    <div class="up-next" id="upNext">&nbsp;</div>
+
     <div class="controls">
       <button class="ctrl-btn" id="pauseBtn" onclick="togglePause()">PAUSE</button>
       <button class="ctrl-btn danger" onclick="stopSession()">ARRÊTER</button>
     </div>
   </section>
 
-  <!-- DONE -->
-  <section class="timer-view" id="doneView">
-    <div class="done-screen">
-      <h2>TERMINÉ</h2>
-      <p>Bien joué. Séance complétée.</p>
-      <button class="start-btn" style="margin-top:32px" onclick="reset()">↻ Nouvelle séance</button>
+  <!-- ======= VIEW: END / FINISHER OFFER ======= -->
+  <section class="view" id="viewEnd">
+    <div class="big-title done">BIEN JOUÉ</div>
+    <div class="lead">Séance principale terminée.</div>
+
+    <ul class="finisher-steps">
+      <li><span class="mark">1</span><div><strong>10 respirations abdominales</strong><br><span style="color:var(--muted);font-size:12px;">Inspire 4s — Expire 6s. Ventre qui gonfle, ventre qui se creuse.</span></div></li>
+      <li><span class="mark">2</span><div><strong>3 × 20 s vacuum abdominal</strong><br><span style="color:var(--muted);font-size:12px;">Expire tout l'air, rentre le ventre comme pour toucher la colonne. 10 s de pause entre chaque.</span></div></li>
+    </ul>
+
+    <button class="start-btn" onclick="startFinisher()" style="background:var(--done);">▶ Lancer le finisher (ventre plat)</button>
+    <button class="secondary-btn" onclick="goHome()" style="margin-top:10px;">Passer — retour à l'accueil</button>
+  </section>
+
+  <!-- ======= VIEW: FINISHER ACTIVE ======= -->
+  <section class="view" id="viewFinisher">
+    <div class="active-head">
+      <span id="finHeadLeft">FINISHER — VENTRE PLAT</span>
+      <span id="finHeadRight"><strong id="finStepLabel">ÉTAPE 1/2</strong></span>
+    </div>
+
+    <div class="phase-label phase-done" id="finPhaseLabel">RESPIRE</div>
+
+    <div class="exo-card">
+      <div class="exo-name" id="finInstruction">Respiration abdominale</div>
+      <div class="exo-desc" id="finSub">Inspire lentement par le nez (4s), expire par la bouche (6s).</div>
+    </div>
+
+    <div class="breath-circle out" id="breathCircle">INSPIRE</div>
+
+    <div class="time-display" id="finTime" style="font-size:clamp(60px,14vw,100px);">—</div>
+    <div class="progress-bar"><div class="progress-fill done" id="finProgress"></div></div>
+
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipFinisher()">TERMINER</button>
+      <button class="ctrl-btn danger" onclick="skipFinisher()">ARRÊTER</button>
     </div>
   </section>
 
-  <footer>&copy; Chrono — Entraînement par intervalles</footer>
+  <!-- ======= VIEW: DONE ======= -->
+  <section class="view" id="viewDone">
+    <div class="big-title done">TERMINÉ</div>
+    <div class="lead">Séance complète. Bravo.</div>
+    <div style="margin-top:30px;">
+      <button class="start-btn" onclick="goHome()">↻ Nouvelle séance</button>
+    </div>
+  </section>
+
+  <footer>&copy; CHRONO — Programme fitness</footer>
 </div>
 
 <script>
-  // ---------- CONFIG LOGIC ----------
-  const inputs = { reps: document.getElementById('reps'), work: document.getElementById('work'), rest: document.getElementById('rest') };
-  const totalEl = document.getElementById('total');
-  const summaryEl = document.getElementById('summary');
+  // =========================================================
+  // DATA — PROGRAMME
+  // =========================================================
+  const PROGRAMS = {
+    A: {
+      id: 'A',
+      title: 'Bas du corps + ventre profond',
+      color: 'var(--accent-a)',
+      exercises: [
+        { name: 'Squat haltères',      desc: "Descends comme pour t'asseoir, remonte en poussant sur les talons.", charge: '2 × 6–8 kg' },
+        { name: 'Hip thrust',          desc: 'Au sol, monte les hanches en contractant les fessiers.',              charge: '10–16 kg sur le bassin' },
+        { name: 'Fentes arrière',      desc: 'Recule une jambe et descends, buste droit.',                          charge: '2 × 5–7 kg' },
+        { name: 'Deadlift kettlebell', desc: 'Penche le buste, dos droit, remonte en poussant les hanches.',        charge: '10–14 kg' },
+        { name: 'Dead bug',            desc: 'Bras et jambes alternés lentement, ventre rentré, bas du dos collé.', charge: 'Poids du corps' },
+      ]
+    },
+    B: {
+      id: 'B',
+      title: 'Haut du corps + gainage',
+      color: 'var(--accent-b)',
+      exercises: [
+        { name: 'Rowing haltères',   desc: 'Dos à plat, tire les haltères vers le nombril, coudes près du corps.', charge: '2 × 6–8 kg' },
+        { name: 'Développé épaules', desc: 'Pousse au-dessus de la tête sans cambrer, gainage actif.',             charge: '2 × 4–6 kg' },
+        { name: 'Curl biceps',       desc: 'Monte les haltères sans bouger les coudes, contrôle la descente.',     charge: '2 × 4–6 kg' },
+        { name: 'Extension triceps', desc: 'Haltère derrière la tête, tends les bras vers le plafond.',            charge: '6–8 kg' },
+        { name: 'Planche genoux',    desc: 'Gainage ventre rentré, dos droit, fessiers serrés.',                   charge: 'Poids du corps' },
+      ]
+    },
+    C: {
+      id: 'C',
+      title: 'Full body brûle graisse',
+      color: 'var(--accent-c)',
+      exercises: [
+        { name: 'Swing kettlebell',  desc: 'Balance la kettlebell avec les hanches, pas avec les bras.',          charge: '8–12 kg' },
+        { name: 'Squat + presse',    desc: 'Squat, puis pousse les haltères au-dessus de la tête en remontant.',  charge: '2 × 4–6 kg' },
+        { name: 'Tirage élastique',  desc: "Fixe l'élastique, tire vers toi en rapprochant les omoplates.",       charge: 'Résistance moyenne' },
+        { name: 'Step-up',           desc: 'Monte sur une chaise ou un step puis redescends, alterne les jambes.', charge: 'Poids du corps ou 2 × 4 kg' },
+        { name: 'Farmer walk',       desc: 'Marche avec haltères lourds, épaules basses, gainage actif.',         charge: '2 × 8–12 kg' },
+      ]
+    }
+  };
+
+  const FORMAT = { work: 40, rest: 20, rounds: 3 };
+
+  // =========================================================
+  // NAVIGATION
+  // =========================================================
+  const views = ['viewHome','viewDetail','viewFree','viewActive','viewEnd','viewFinisher','viewDone'];
+  function showView(id) {
+    views.forEach(v => document.getElementById(v).classList.toggle('active', v === id));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function goHome() {
+    stopAllTimers();
+    showView('viewHome');
+    document.getElementById('headerTag').textContent = 'Programme fitness';
+  }
+
+  // =========================================================
+  // HOME — render program cards
+  // =========================================================
+  function renderHome() {
+    const grid = document.getElementById('programGrid');
+    grid.innerHTML = '';
+    Object.values(PROGRAMS).forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'program-card';
+      btn.dataset.id = p.id;
+      btn.innerHTML = `
+        <div class="badge">${p.id}</div>
+        <div class="info">
+          <h3>Séance ${p.id} — ${p.title}</h3>
+          <p>${p.exercises.length} exercices · ${FORMAT.work}s/${FORMAT.rest}s · ${FORMAT.rounds} tours</p>
+        </div>
+        <div class="arrow">→</div>`;
+      btn.onclick = () => openDetail(p.id);
+      grid.appendChild(btn);
+    });
+  }
+
+  // =========================================================
+  // SEANCE DETAIL
+  // =========================================================
+  let currentProgram = null;
+
+  function openDetail(id) {
+    currentProgram = PROGRAMS[id];
+    document.getElementById('detailCode').textContent = 'SÉANCE ' + id;
+    document.getElementById('detailName').textContent = currentProgram.title;
+    document.getElementById('metaWork').textContent   = FORMAT.work + 's';
+    document.getElementById('metaRest').textContent   = FORMAT.rest + 's';
+    document.getElementById('metaRounds').textContent = FORMAT.rounds;
+
+    const list = document.getElementById('exerciseList');
+    list.innerHTML = '';
+    currentProgram.exercises.forEach((e, i) => {
+      const div = document.createElement('div');
+      div.className = 'exercise';
+      div.innerHTML = `
+        <div class="num">${String(i+1).padStart(2,'0')}</div>
+        <div>
+          <div class="name">${e.name}</div>
+          <div class="charge">${e.charge}</div>
+          <div class="desc">${e.desc}</div>
+        </div>`;
+      list.appendChild(div);
+    });
+
+    // estimate
+    const n = currentProgram.exercises.length;
+    const perRound = n * FORMAT.work + (n - 1) * FORMAT.rest;
+    const total = perRound * FORMAT.rounds + FORMAT.rest * (FORMAT.rounds - 1);
+    document.getElementById('estTotal').textContent   = fmtTime(total);
+    document.getElementById('estSummary').textContent = `${FORMAT.rounds}× (${n} exos)`;
+
+    const startBtn = document.getElementById('startSeanceBtn');
+    startBtn.className = 'start-btn' + (id === 'B' ? ' b' : id === 'C' ? ' c' : '');
+
+    document.getElementById('headerTag').textContent = 'Séance ' + id;
+    showView('viewDetail');
+  }
+
+  // =========================================================
+  // FREE TIMER — inputs + totals
+  // =========================================================
+  const inputs = {
+    reps: document.getElementById('reps'),
+    work: document.getElementById('work'),
+    rest: document.getElementById('rest')
+  };
+  const freeTotalEl   = document.getElementById('freeTotal');
+  const freeSummaryEl = document.getElementById('freeSummary');
 
   function adjust(key, delta) {
     const el = inputs[key];
-    const min = parseInt(el.min);
-    const max = parseInt(el.max);
+    const min = parseInt(el.min), max = parseInt(el.max);
     let v = parseInt(el.value) || 0;
     v = Math.max(min, Math.min(max, v + delta));
     el.value = v;
-    updateTotals();
+    updateFreeTotals();
   }
 
   function fmtTime(s) {
@@ -429,24 +950,25 @@
     return m > 0 ? `${m}m ${sec.toString().padStart(2,'0')}s` : `${sec}s`;
   }
 
-  function updateTotals() {
+  function updateFreeTotals() {
     const r = parseInt(inputs.reps.value) || 0;
     const w = parseInt(inputs.work.value) || 0;
     const rest = parseInt(inputs.rest.value) || 0;
     const total = r * w + Math.max(0, r - 1) * rest;
-    totalEl.textContent = fmtTime(total);
-    summaryEl.textContent = `${r}× (${w}s / ${rest}s)`;
+    freeTotalEl.textContent   = fmtTime(total);
+    freeSummaryEl.textContent = `${r}× (${w}s / ${rest}s)`;
   }
-  Object.values(inputs).forEach(i => i.addEventListener('input', updateTotals));
-  updateTotals();
+  Object.values(inputs).forEach(i => i.addEventListener('input', updateFreeTotals));
+  updateFreeTotals();
 
-  // ---------- AUDIO ----------
+  // =========================================================
+  // AUDIO — Web Audio beeps
+  // =========================================================
   let audioCtx = null;
   function ensureAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
-
   function beep(freq = 880, duration = 0.15, type = 'sine', volume = 0.3) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
@@ -461,63 +983,212 @@
     osc.start();
     osc.stop(audioCtx.currentTime + duration);
   }
-
-  function beepCountdown() { beep(660, 0.12, 'square', 0.25); }     // court, pour le 3-2-1
-  function beepWorkStart() { beep(1000, 0.25, 'square', 0.35); setTimeout(() => beep(1200, 0.3, 'square', 0.35), 180); }
-  function beepRestStart() { beep(520, 0.4, 'sine', 0.3); }
-  function beepFinish() {
+  const beepCountdown = () => beep(660, 0.12, 'square', 0.25);
+  const beepWorkStart = () => { beep(1000, 0.25, 'square', 0.35); setTimeout(() => beep(1200, 0.3, 'square', 0.35), 180); };
+  const beepRestStart = () => beep(520, 0.4, 'sine', 0.3);
+  const beepFinish    = () => {
     beep(880, 0.2, 'square', 0.35);
     setTimeout(() => beep(1100, 0.2, 'square', 0.35), 220);
     setTimeout(() => beep(1400, 0.45, 'square', 0.35), 440);
-  }
+  };
+  const beepSoft      = () => beep(440, 0.25, 'sine', 0.2);
 
-  // ---------- TIMER STATE ----------
-  const container = document.getElementById('container');
-  const configEl = document.getElementById('config');
-  const timerView = document.getElementById('timerView');
-  const doneView = document.getElementById('doneView');
-  const phaseLabel = document.getElementById('phaseLabel');
-  const timeDisplay = document.getElementById('timeDisplay');
+  // =========================================================
+  // TIMER — shared state & engine
+  // =========================================================
+  const phaseLabel   = document.getElementById('phaseLabel');
+  const timeDisplay  = document.getElementById('timeDisplay');
   const progressFill = document.getElementById('progressFill');
-  const repCurrent = document.getElementById('repCurrent');
-  const repTotal = document.getElementById('repTotal');
-  const pauseBtn = document.getElementById('pauseBtn');
+  const pauseBtn     = document.getElementById('pauseBtn');
+  const exoName      = document.getElementById('exoName');
+  const exoCharge    = document.getElementById('exoCharge');
+  const exoDesc      = document.getElementById('exoDesc');
+  const exoCard      = document.getElementById('exoCard');
+  const upNext       = document.getElementById('upNext');
+  const roundCur     = document.getElementById('roundCur');
+  const roundTot     = document.getElementById('roundTot');
 
   let state = {
-    reps: 0, workDur: 0, restDur: 0,
-    currentRep: 0, phase: null, remaining: 0, phaseTotal: 0,
-    interval: null, paused: false
+    mode: null,        // 'seance' | 'free'
+    program: null,
+    sequence: [],      // liste ordonnée d'étapes
+    idx: 0,
+    remaining: 0,
+    phaseTotal: 0,
+    paused: false,
+    interval: null
   };
 
-  function start() {
-    ensureAudio();
-    state.reps = parseInt(inputs.reps.value) || 1;
-    state.workDur = parseInt(inputs.work.value) || 1;
-    state.restDur = parseInt(inputs.rest.value) || 0;
-    state.currentRep = 0;
+  function stopAllTimers() {
+    clearInterval(state.interval);
+    clearInterval(finState.interval);
     state.paused = false;
+    releaseWakeLock();
+  }
+
+  // ---------- build sequence for a structured séance ----------
+  function buildSeanceSequence(program) {
+    const seq = [];
+    seq.push({ type: 'ready', duration: 3 });
+
+    for (let r = 1; r <= FORMAT.rounds; r++) {
+      program.exercises.forEach((exo, i) => {
+        seq.push({
+          type: 'work',
+          duration: FORMAT.work,
+          exo,
+          round: r,
+          exoIndex: i + 1
+        });
+        const isLastExoOfRound = (i === program.exercises.length - 1);
+        const isLastRound      = (r === FORMAT.rounds);
+        if (!(isLastExoOfRound && isLastRound)) {
+          // rest after every work, except the very last of the session
+          seq.push({
+            type: 'rest',
+            duration: FORMAT.rest,
+            round: r,
+            // next exo (for "up next" display)
+            nextExo: isLastExoOfRound ? program.exercises[0] : program.exercises[i + 1],
+            nextRound: isLastExoOfRound ? r + 1 : r
+          });
+        }
+      });
+    }
+    return seq;
+  }
+
+  // ---------- build sequence for free-timer mode ----------
+  function buildFreeSequence(reps, work, rest) {
+    const seq = [{ type: 'ready', duration: 3 }];
+    for (let i = 1; i <= reps; i++) {
+      seq.push({ type: 'work', duration: work, free: true, repIndex: i, repTotal: reps });
+      if (i < reps && rest > 0) {
+        seq.push({ type: 'rest', duration: rest, free: true });
+      }
+    }
+    return seq;
+  }
+
+  // =========================================================
+  // START session
+  // =========================================================
+  function startSeance() {
+    ensureAudio();
+    requestWakeLock();
+    state.mode = 'seance';
+    state.program = currentProgram;
+    state.sequence = buildSeanceSequence(currentProgram);
+    state.idx = 0;
+
+    document.getElementById('activeHeadLeft').textContent = 'SÉANCE ' + currentProgram.id;
+    roundTot.textContent = FORMAT.rounds;
+    roundCur.textContent = 1;
+    document.getElementById('headerTag').textContent = 'Séance ' + currentProgram.id + ' en cours';
     pauseBtn.textContent = 'PAUSE';
+    state.paused = false;
 
-    container.classList.add('running');
-    timerView.classList.add('active');
-    doneView.classList.remove('active');
-    repTotal.textContent = state.reps;
-
-    setPhase('ready', 3);
+    showView('viewActive');
+    enterStep();
     runTimer();
   }
 
-  function setPhase(phase, duration) {
-    state.phase = phase;
-    state.remaining = duration;
-    state.phaseTotal = duration;
+  function startFree() {
+    ensureAudio();
+    requestWakeLock();
+    const reps = parseInt(inputs.reps.value) || 1;
+    const work = parseInt(inputs.work.value) || 1;
+    const rest = parseInt(inputs.rest.value) || 0;
+    state.mode = 'free';
+    state.program = null;
+    state.sequence = buildFreeSequence(reps, work, rest);
+    state.idx = 0;
 
-    phaseLabel.className = 'phase-label phase-' + phase;
-    progressFill.className = 'progress-fill ' + phase;
+    document.getElementById('activeHeadLeft').textContent = 'CHRONO LIBRE';
+    roundTot.textContent = reps;
+    roundCur.textContent = 1;
+    document.getElementById('headerTag').textContent = 'Chrono en cours';
+    pauseBtn.textContent = 'PAUSE';
+    state.paused = false;
 
-    if (phase === 'ready') phaseLabel.textContent = 'PRÊT ?';
-    if (phase === 'work') { phaseLabel.textContent = 'GO !'; repCurrent.textContent = state.currentRep; }
-    if (phase === 'rest') phaseLabel.textContent = 'REPOS';
+    showView('viewActive');
+    enterStep();
+    runTimer();
+  }
+
+  // =========================================================
+  // Render current step
+  // =========================================================
+  function enterStep() {
+    const step = state.sequence[state.idx];
+    state.remaining  = step.duration;
+    state.phaseTotal = step.duration;
+
+    phaseLabel.className = 'phase-label phase-' + step.type;
+    progressFill.className = 'progress-fill ' + step.type;
+    exoCard.classList.toggle('rest', step.type === 'rest');
+
+    if (step.type === 'ready') {
+      phaseLabel.textContent = 'PRÊT ?';
+      if (state.mode === 'seance') {
+        const first = state.program.exercises[0];
+        exoName.textContent  = 'À suivre : ' + first.name;
+        exoCharge.style.display = 'inline-block';
+        exoCharge.textContent = first.charge;
+        exoDesc.textContent = first.desc;
+        upNext.innerHTML = `Tour <strong>1</strong> — 1er exercice dans 3…`;
+      } else {
+        exoName.textContent  = 'Préparez-vous';
+        exoCharge.style.display = 'none';
+        exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
+        upNext.innerHTML = '';
+      }
+    }
+
+    if (step.type === 'work') {
+      phaseLabel.textContent = 'GO !';
+      beepWorkStart();
+      if (step.exo) {
+        exoName.textContent  = step.exo.name;
+        exoCharge.style.display = 'inline-block';
+        exoCharge.textContent = step.exo.charge;
+        exoDesc.textContent  = step.exo.desc;
+        roundCur.textContent = step.round;
+        // up next
+        const next = state.sequence[state.idx + 1];
+        if (next && next.type === 'rest' && next.nextExo) {
+          upNext.innerHTML = `Suivant : <strong>${next.nextExo.name}</strong>`;
+        } else if (!next) {
+          upNext.innerHTML = `<strong>Dernier exercice !</strong>`;
+        } else {
+          upNext.innerHTML = '';
+        }
+      } else if (step.free) {
+        exoName.textContent   = 'TRAVAIL';
+        exoCharge.style.display = 'none';
+        exoDesc.textContent   = `Série ${step.repIndex} / ${step.repTotal}`;
+        roundCur.textContent  = step.repIndex;
+        upNext.innerHTML = '';
+      }
+    }
+
+    if (step.type === 'rest') {
+      phaseLabel.textContent = 'REPOS';
+      beepRestStart();
+      if (step.nextExo) {
+        exoName.textContent  = 'Prochain : ' + step.nextExo.name;
+        exoCharge.style.display = 'inline-block';
+        exoCharge.textContent = step.nextExo.charge;
+        exoDesc.textContent  = step.nextExo.desc;
+        upNext.innerHTML = step.nextRound > state.sequence.filter(s=>s.round===step.round).length/2 && step.nextRound !== step.round
+          ? `Nouveau tour → <strong>Tour ${step.nextRound}</strong>` : '';
+      } else {
+        exoName.textContent = 'Récupération';
+        exoCharge.style.display = 'none';
+        exoDesc.textContent = 'Respire, bois un peu d\'eau.';
+        upNext.innerHTML = '';
+      }
+    }
 
     updateDisplay();
   }
@@ -535,7 +1206,6 @@
       state.remaining--;
       updateDisplay();
 
-      // bips de décompte sur les 3 dernières secondes de chaque phase (y compris "PRÊT?")
       if (state.remaining > 0 && state.remaining <= 3) {
         beepCountdown();
         timeDisplay.classList.remove('pulse');
@@ -543,47 +1213,29 @@
         timeDisplay.classList.add('pulse');
       }
 
-      if (state.remaining <= 0) {
-        advancePhase();
-      }
+      if (state.remaining <= 0) advanceStep();
     }, 1000);
   }
 
-  function advancePhase() {
-    if (state.phase === 'ready') {
-      state.currentRep = 1;
-      beepWorkStart();
-      setPhase('work', state.workDur);
+  function advanceStep() {
+    state.idx++;
+    if (state.idx >= state.sequence.length) {
+      finishSession();
       return;
     }
-    if (state.phase === 'work') {
-      if (state.currentRep >= state.reps) {
-        finishSession();
-        return;
-      }
-      if (state.restDur > 0) {
-        beepRestStart();
-        setPhase('rest', state.restDur);
-      } else {
-        state.currentRep++;
-        beepWorkStart();
-        setPhase('work', state.workDur);
-      }
-      return;
-    }
-    if (state.phase === 'rest') {
-      state.currentRep++;
-      beepWorkStart();
-      setPhase('work', state.workDur);
-      return;
-    }
+    enterStep();
   }
 
   function finishSession() {
     clearInterval(state.interval);
     beepFinish();
-    timerView.classList.remove('active');
-    doneView.classList.add('active');
+    if (state.mode === 'seance') {
+      // offer finisher
+      showView('viewEnd');
+    } else {
+      showView('viewDone');
+    }
+    releaseWakeLock();
   }
 
   function togglePause() {
@@ -593,28 +1245,158 @@
 
   function stopSession() {
     if (!confirm('Arrêter la séance en cours ?')) return;
-    clearInterval(state.interval);
-    reset();
+    stopAllTimers();
+    goHome();
   }
 
-  function reset() {
-    container.classList.remove('running');
-    timerView.classList.remove('active');
-    doneView.classList.remove('active');
-    configEl.style.display = '';
+  // =========================================================
+  // FINISHER — 10 respirations + 3 × 20s vacuum
+  // =========================================================
+  const finPhaseLabel = document.getElementById('finPhaseLabel');
+  const finTime       = document.getElementById('finTime');
+  const finProgress   = document.getElementById('finProgress');
+  const finInstr      = document.getElementById('finInstruction');
+  const finSub        = document.getElementById('finSub');
+  const finStepLabel  = document.getElementById('finStepLabel');
+  const breathCircle  = document.getElementById('breathCircle');
+
+  // Sequence :
+  // Step 1: 10 × (inspire 4s + expire 6s) = 100s
+  // Step 2: 3 × (vacuum 20s + rest 10s) but no rest after last = 20+10+20+10+20 = 80s
+  const finSequence = [];
+  for (let i = 1; i <= 10; i++) {
+    finSequence.push({ kind: 'breathe-in',  dur: 4, idx: i, total: 10 });
+    finSequence.push({ kind: 'breathe-out', dur: 6, idx: i, total: 10 });
+  }
+  for (let i = 1; i <= 3; i++) {
+    finSequence.push({ kind: 'vacuum', dur: 20, idx: i, total: 3 });
+    if (i < 3) finSequence.push({ kind: 'vacuum-rest', dur: 10, idx: i, total: 3 });
   }
 
-  // Empêche le téléphone de se mettre en veille pendant l'entraînement (si supporté)
+  let finState = {
+    idx: 0, remaining: 0, phaseTotal: 0, interval: null, paused: false
+  };
+
+  function startFinisher() {
+    ensureAudio();
+    requestWakeLock();
+    finState.idx = 0;
+    document.getElementById('headerTag').textContent = 'Finisher';
+    showView('viewFinisher');
+    enterFinStep();
+    runFinTimer();
+  }
+
+  function enterFinStep() {
+    const s = finSequence[finState.idx];
+    finState.remaining  = s.dur;
+    finState.phaseTotal = s.dur;
+
+    if (s.kind === 'breathe-in') {
+      finPhaseLabel.textContent = 'INSPIRE';
+      finPhaseLabel.style.color = 'var(--done)';
+      finInstr.textContent = `Respiration ${s.idx} / ${s.total}`;
+      finSub.textContent   = 'Inspire par le nez, gonfle le ventre.';
+      finStepLabel.textContent = 'ÉTAPE 1/2 — RESPIRATIONS';
+      breathCircle.textContent = 'INSPIRE';
+      breathCircle.classList.remove('out');
+      breathCircle.classList.add('in');
+      beepSoft();
+    } else if (s.kind === 'breathe-out') {
+      finPhaseLabel.textContent = 'EXPIRE';
+      finInstr.textContent = `Respiration ${s.idx} / ${s.total}`;
+      finSub.textContent   = 'Expire lentement par la bouche, creuse le ventre.';
+      breathCircle.textContent = 'EXPIRE';
+      breathCircle.classList.remove('in');
+      breathCircle.classList.add('out');
+    } else if (s.kind === 'vacuum') {
+      finPhaseLabel.textContent = 'VACUUM';
+      finPhaseLabel.style.color = 'var(--ready)';
+      finInstr.textContent = `Vacuum ${s.idx} / ${s.total}`;
+      finSub.textContent   = 'Expire à fond puis rentre le ventre au maximum. Tiens 20 s.';
+      finStepLabel.textContent = 'ÉTAPE 2/2 — VACUUM';
+      breathCircle.textContent = 'RENTRE';
+      breathCircle.classList.remove('in');
+      breathCircle.classList.add('out');
+      beepWorkStart();
+    } else if (s.kind === 'vacuum-rest') {
+      finPhaseLabel.textContent = 'REPOS';
+      finPhaseLabel.style.color = 'var(--rest)';
+      finInstr.textContent = 'Respire normalement';
+      finSub.textContent   = '10 secondes avant le prochain vacuum.';
+      breathCircle.textContent = 'PAUSE';
+      beepRestStart();
+    }
+    updateFinDisplay();
+  }
+
+  function updateFinDisplay() {
+    finTime.textContent = finState.remaining;
+    const pct = finState.phaseTotal > 0 ? ((finState.phaseTotal - finState.remaining) / finState.phaseTotal) * 100 : 0;
+    finProgress.style.width = pct + '%';
+  }
+
+  function runFinTimer() {
+    clearInterval(finState.interval);
+    finState.interval = setInterval(() => {
+      finState.remaining--;
+      updateFinDisplay();
+      const s = finSequence[finState.idx];
+      // countdown beeps only for vacuum holds (not during breathing, too noisy)
+      if ((s.kind === 'vacuum' || s.kind === 'vacuum-rest') && finState.remaining > 0 && finState.remaining <= 3) {
+        beepCountdown();
+      }
+      if (finState.remaining <= 0) advanceFinStep();
+    }, 1000);
+  }
+
+  function advanceFinStep() {
+    finState.idx++;
+    if (finState.idx >= finSequence.length) {
+      finishFinisher();
+      return;
+    }
+    enterFinStep();
+  }
+
+  function finishFinisher() {
+    clearInterval(finState.interval);
+    beepFinish();
+    showView('viewDone');
+    releaseWakeLock();
+  }
+
+  function skipFinisher() {
+    if (!confirm('Terminer le finisher maintenant ?')) return;
+    clearInterval(finState.interval);
+    showView('viewDone');
+    releaseWakeLock();
+  }
+
+  // =========================================================
+  // WAKE LOCK
+  // =========================================================
   let wakeLock = null;
   async function requestWakeLock() {
     try {
       if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
     } catch (e) {}
   }
+  function releaseWakeLock() {
+    try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch (e) {}
+  }
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && container.classList.contains('running')) requestWakeLock();
+    if (document.visibilityState === 'visible' &&
+        (document.getElementById('viewActive').classList.contains('active') ||
+         document.getElementById('viewFinisher').classList.contains('active'))) {
+      requestWakeLock();
+    }
   });
-  document.querySelector('.start-btn').addEventListener('click', requestWakeLock);
+
+  // =========================================================
+  // INIT
+  // =========================================================
+  renderHome();
 </script>
 </body>
 </html>
