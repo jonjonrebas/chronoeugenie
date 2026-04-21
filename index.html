@@ -364,6 +364,83 @@
     line-height: 1.5;
   }
 
+  .cues {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+  .cues .cue-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .cues ul { list-style: none; padding: 0; }
+  .cues li {
+    font-size: 12px;
+    color: var(--text);
+    padding: 3px 0 3px 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .cues li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--work);
+  }
+
+  .format-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .format-toggle .format-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .toggle-group {
+    display: flex;
+    border: 1px solid var(--line);
+  }
+  .toggle-btn {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 8px 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn + .toggle-btn { border-left: 1px solid var(--line); }
+  .toggle-btn.active { background: var(--work); color: var(--bg); }
+  .toggle-btn:hover:not(.active) { color: var(--text); background: var(--surface-2); }
+
+  .exo-card .exo-cues {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+  .exo-card .exo-cues .cue-key {
+    display: inline-block;
+    color: var(--work);
+    margin-right: 4px;
+  }
+
   .finisher-card {
     border: 1px dashed var(--line);
     padding: 18px;
@@ -691,8 +768,8 @@
   <!-- ======= VIEW: HOME ======= -->
   <section class="view active" id="viewHome">
     <div class="equipment-banner">
-      <strong>MATÉRIEL</strong> · Entraînement à la maison — petites haltères (4 à 16 kg),
-      un tapis, éventuellement une kettlebell et un élastique. Pas besoin de salle.
+      <strong>PROGRAMME MAISON</strong> · 3 séances / semaine · format circuit · 20 min efficaces<br>
+      <strong>MATÉRIEL</strong> · Petites haltères (6 à 10 kg), une kettlebell 12 kg, un élastique fort, un tapis.
     </div>
     <div class="section-title">Ton programme — Choisis ta séance</div>
     <div class="program-grid" id="programGrid"></div>
@@ -709,10 +786,18 @@
       <div class="name" id="detailName">—</div>
     </div>
 
+    <div class="format-toggle">
+      <span class="format-label">FORMAT TEMPS</span>
+      <div class="toggle-group" id="formatToggle">
+        <button class="toggle-btn active" data-idx="0" onclick="setFormat(0)">40 / 20</button>
+        <button class="toggle-btn" data-idx="1" onclick="setFormat(1)">45 / 15</button>
+      </div>
+    </div>
+
     <div class="seance-meta">
       <div class="cell"><div class="k">Travail</div><div class="v" id="metaWork">40s</div></div>
       <div class="cell"><div class="k">Repos</div><div class="v" id="metaRest">20s</div></div>
-      <div class="cell"><div class="k">Tours</div><div class="v" id="metaRounds">3</div></div>
+      <div class="cell"><div class="k">Tours</div><div class="v" id="metaRounds">4</div></div>
     </div>
 
     <div class="section-title">Exercices</div>
@@ -792,6 +877,7 @@
       <div class="exo-name" id="exoName">—</div>
       <div class="exo-charge" id="exoCharge" style="display:none;">—</div>
       <div class="exo-desc" id="exoDesc">—</div>
+      <div class="exo-cues" id="exoCues"></div>
     </div>
 
     <div class="time-display" id="timeDisplay">3</div>
@@ -878,19 +964,44 @@
   };
 
   // =========================================================
-  // DATA — PROGRAMME (maison · haltères + tapis)
+  // DATA — PROGRAMME (maison · 3 séances / semaine · 20 min)
   // =========================================================
   const PROGRAMS = {
     A: {
       id: 'A',
-      title: 'Bas du corps + ventre profond',
+      title: 'Bas du corps + ventre plat',
       color: 'var(--accent-a)',
       exercises: [
-        { name: 'Squat haltères',      icon: ICONS.squat,    desc: "Debout, pieds largeur bassin. Descends comme pour t'asseoir, talons au sol, remonte en poussant sur les talons.", charge: '2 × 6–8 kg' },
-        { name: 'Hip thrust',          icon: ICONS.hipthrust, desc: 'Sur le tapis, dos au sol, pieds à plat. Monte les hanches en contractant les fessiers, pose une haltère sur le bassin.', charge: '10–16 kg sur le bassin' },
-        { name: 'Fentes arrière',      icon: ICONS.lunge,    desc: 'Debout, haltères le long du corps. Recule une jambe et descends le genou arrière vers le sol, buste droit. Alterne.', charge: '2 × 5–7 kg' },
-        { name: 'Deadlift kettlebell', icon: ICONS.deadlift, desc: 'Kettlebell au sol entre les pieds. Penche le buste, dos droit, remonte en poussant le sol et les hanches vers l\'avant.', charge: '10–14 kg' },
-        { name: 'Dead bug',            icon: ICONS.deadbug,  desc: 'Allongé sur le dos, bras et jambes en l\'air. Tends lentement bras droit + jambe gauche, retour, puis l\'inverse. Ventre rentré.', charge: 'Poids du corps' },
+        {
+          name: 'Squat', icon: ICONS.squat,
+          charge: '2 × 10 kg  ou  KB 12 kg (goblet)',
+          desc: "Debout, pieds largeur bassin. Descends en t'asseyant, puis remonte en poussant sur les talons.",
+          cues: ['Descente lente (3 s)', 'Pause 1 s en bas', 'Genoux ouverts, poids dans les talons', 'Ventre légèrement rentré']
+        },
+        {
+          name: 'Hip thrust', icon: ICONS.hipthrust,
+          charge: 'Kettlebell 12 kg',
+          desc: 'Dos au sol, pieds à plat, kettlebell sur le bassin. Monte les hanches en contractant les fessiers.',
+          cues: ['Pause 2 s en haut', 'Rétroversion du bassin (clé ventre plat)', 'Ne cambre pas le bas du dos']
+        },
+        {
+          name: 'Fentes arrière', icon: ICONS.lunge,
+          charge: '2 × 6 kg  ou  2 × 10 kg',
+          desc: 'Debout, haltères le long du corps. Recule une jambe et descends le genou arrière vers le sol.',
+          cues: ['Buste légèrement penché', 'Descente lente', 'Pousse avec le talon avant']
+        },
+        {
+          name: 'Deadlift kettlebell', icon: ICONS.deadlift,
+          charge: 'Kettlebell 12 kg',
+          desc: 'Kettlebell au sol entre les pieds. Penche-toi, remonte en poussant le sol et les hanches.',
+          cues: ['Dos neutre', 'Mouvement lent et contrôlé', 'Kettlebell proche du corps']
+        },
+        {
+          name: 'Dead bug', icon: ICONS.deadbug,
+          charge: 'Poids du corps',
+          desc: 'Allongé sur le dos, bras et jambes en l\'air. Tends bras + jambe opposés lentement, puis alterne.',
+          cues: ['Très lent', 'Expire fort en tendant la jambe', 'Bas du dos plaqué au sol']
+        },
       ]
     },
     B: {
@@ -898,28 +1009,102 @@
       title: 'Haut du corps + gainage',
       color: 'var(--accent-b)',
       exercises: [
-        { name: 'Rowing haltères',   icon: ICONS.row,     desc: 'Buste penché en avant, dos plat, haltères dans les mains. Tire-les vers le nombril en serrant les omoplates.', charge: '2 × 6–8 kg' },
-        { name: 'Développé épaules', icon: ICONS.press,   desc: 'Assis ou debout, haltères aux épaules. Pousse-les au-dessus de la tête sans cambrer le dos, gainage actif.', charge: '2 × 4–6 kg' },
-        { name: 'Curl biceps',       icon: ICONS.curl,    desc: 'Debout, bras le long du corps. Monte les haltères en pliant les coudes, sans bouger les bras. Contrôle la descente.', charge: '2 × 4–6 kg' },
-        { name: 'Extension triceps', icon: ICONS.triceps, desc: 'Une haltère tenue à deux mains derrière la tête, coudes hauts. Tends les bras vers le plafond, puis redescends.', charge: '6–8 kg' },
-        { name: 'Planche genoux',    icon: ICONS.plank,   desc: 'Sur le tapis, appuie-toi sur les avant-bras et les genoux. Ligne droite des épaules aux genoux, ventre rentré.', charge: 'Poids du corps' },
+        {
+          name: 'Rowing haltères', icon: ICONS.row,
+          charge: '2 × 6–10 kg',
+          desc: 'Buste penché en avant, dos plat. Tire les haltères vers le nombril en serrant les omoplates.',
+          cues: ['Pause 2 s en haut', 'Tire avec les coudes, pas avec les mains']
+        },
+        {
+          name: 'Développé épaules', icon: ICONS.press,
+          charge: '2 × 6 kg',
+          desc: 'Haltères aux épaules. Pousse au-dessus de la tête sans cambrer le dos.',
+          cues: ['Gainage serré', 'Pas de cambrure', 'Expire en poussant']
+        },
+        {
+          name: 'Curl biceps', icon: ICONS.curl,
+          charge: '2 × 6 kg',
+          desc: 'Debout, bras le long du corps. Monte les haltères en pliant les coudes, sans bouger les bras.',
+          cues: ['Contrôle total', 'Pas d\'élan', 'Descente lente']
+        },
+        {
+          name: 'Extension triceps', icon: ICONS.triceps,
+          charge: '1 × 6–10 kg (2 mains)',
+          desc: 'Une haltère tenue à deux mains derrière la tête, coudes hauts. Tends les bras vers le plafond.',
+          cues: ['Coudes fixes', 'Mouvement lent', 'Ne descends pas trop bas']
+        },
+        {
+          name: 'Planche genoux', icon: ICONS.plank,
+          charge: 'Poids du corps',
+          desc: 'Sur le tapis, appuie-toi sur les avant-bras et les genoux. Ligne droite des épaules aux genoux.',
+          cues: ['Bassin légèrement rentré', 'Ventre aspiré (transverse actif)', 'Fessiers serrés']
+        },
       ]
     },
     C: {
       id: 'C',
-      title: 'Full body brûle graisse',
+      title: 'Full body + brûlage',
       color: 'var(--accent-c)',
       exercises: [
-        { name: 'Swing kettlebell',  icon: ICONS.swing,      desc: 'Kettlebell entre les jambes. Balance-la jusqu\'à hauteur des épaules en poussant avec les hanches (pas avec les bras).', charge: '8–12 kg' },
-        { name: 'Squat + presse',    icon: ICONS.squatpress, desc: 'Haltères aux épaules. Descends en squat, puis en remontant pousse les haltères au-dessus de la tête.', charge: '2 × 4–6 kg' },
-        { name: 'Tirage élastique',  icon: ICONS.band,       desc: 'Fixe l\'élastique à une poignée de porte. Tire vers toi en rapprochant les omoplates, coudes près du corps.', charge: 'Résistance moyenne' },
-        { name: 'Step-up',           icon: ICONS.stepup,     desc: 'Devant une chaise solide ou un step. Monte dessus avec une jambe, redescends, alterne. Option haltères dans les mains.', charge: 'Poids du corps ou 2 × 4 kg' },
-        { name: 'Farmer walk',       icon: ICONS.farmer,     desc: 'Haltères lourdes dans chaque main, épaules basses, gainage actif. Marche 30 à 40 secondes, pas de déhanché.', charge: '2 × 8–12 kg' },
+        {
+          name: 'Swing kettlebell', icon: ICONS.swing,
+          charge: 'Kettlebell 12 kg',
+          desc: 'Kettlebell entre les jambes. Balance-la à hauteur des épaules en poussant avec les hanches.',
+          cues: ['Explosif', 'Hanches, pas les bras', 'Gainage actif']
+        },
+        {
+          name: 'Squat + presse', icon: ICONS.squatpress,
+          charge: '2 × 6 kg',
+          desc: 'Haltères aux épaules. Squat en bas, puis pousse au-dessus de la tête en remontant.',
+          cues: ['Pause en bas du squat', 'Contrôle tout le long', 'Gainage en poussant']
+        },
+        {
+          name: 'Tirage élastique', icon: ICONS.band,
+          charge: 'Résistance forte',
+          desc: 'Élastique fixé devant toi. Tire les poignées vers le corps, coudes près des flancs.',
+          cues: ['Serre les omoplates', 'Pause 1 s en fin de tirage']
+        },
+        {
+          name: 'Step-up', icon: ICONS.stepup,
+          charge: '2 × 6–10 kg',
+          desc: 'Devant une chaise solide ou un step. Monte avec une jambe, redescends, alterne.',
+          cues: ['Contrôle la descente', 'Pousse avec la jambe haute', 'Pas d\'élan']
+        },
+        {
+          name: 'Farmer walk', icon: ICONS.farmer,
+          charge: '2 × 10 kg',
+          desc: 'Haltères dans chaque main, épaules basses, dos droit. Marche lentement pendant toute la phase.',
+          cues: ['Marche lente', 'Gainage maximal', 'Épaules basses, pas de déhanché']
+        },
       ]
     }
   };
 
-  const FORMAT = { work: 40, rest: 20, rounds: 3 };
+  // 2 presets sélectionnables par l'utilisatrice
+  const FORMAT_PRESETS = [
+    { work: 40, rest: 20 },
+    { work: 45, rest: 15 },
+  ];
+  let formatIndex = 0; // 0 = 40/20 (défaut), 1 = 45/15
+  const ROUNDS = 4;
+  function currentFormat() {
+    const p = FORMAT_PRESETS[formatIndex];
+    return { work: p.work, rest: p.rest, rounds: ROUNDS };
+  }
+  // alias pour compat
+  const FORMAT = new Proxy({}, { get: (_, k) => currentFormat()[k] });
+
+  function setFormat(idx) {
+    formatIndex = idx;
+    // update toggle UI
+    document.querySelectorAll('#formatToggle .toggle-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.idx) === idx);
+    });
+    // re-render detail if open
+    if (currentProgram) openDetail(currentProgram.id, true);
+    // re-render home cards
+    renderHome();
+  }
 
   // =========================================================
   // NAVIGATION
@@ -963,7 +1148,7 @@
   // =========================================================
   let currentProgram = null;
 
-  function openDetail(id) {
+  function openDetail(id, keepView) {
     currentProgram = PROGRAMS[id];
     document.getElementById('detailCode').textContent = 'SÉANCE ' + id;
     document.getElementById('detailName').textContent = currentProgram.title;
@@ -977,6 +1162,11 @@
     currentProgram.exercises.forEach((e, i) => {
       const div = document.createElement('div');
       div.className = 'exercise';
+      const cuesHtml = (e.cues && e.cues.length) ? `
+        <div class="cues">
+          <div class="cue-title">Exécution</div>
+          <ul>${e.cues.map(c => `<li>${c}</li>`).join('')}</ul>
+        </div>` : '';
       div.innerHTML = `
         <div class="icon-box">
           <span class="num">${String(i+1).padStart(2,'0')}</span>
@@ -986,6 +1176,7 @@
           <div class="name">${e.name}</div>
           <div class="charge">${e.charge}</div>
           <div class="desc">${e.desc}</div>
+          ${cuesHtml}
         </div>`;
       list.appendChild(div);
     });
@@ -995,13 +1186,13 @@
     const perRound = n * FORMAT.work + (n - 1) * FORMAT.rest;
     const total = perRound * FORMAT.rounds + FORMAT.rest * (FORMAT.rounds - 1);
     document.getElementById('estTotal').textContent   = fmtTime(total);
-    document.getElementById('estSummary').textContent = `${FORMAT.rounds}× (${n} exos)`;
+    document.getElementById('estSummary').textContent = `${FORMAT.rounds}× (${n} exos) · ${FORMAT.work}s/${FORMAT.rest}s`;
 
     const startBtn = document.getElementById('startSeanceBtn');
     startBtn.className = 'start-btn' + (id === 'B' ? ' b' : id === 'C' ? ' c' : '');
 
     document.getElementById('headerTag').textContent = 'Séance ' + id;
-    showView('viewDetail');
+    if (!keepView) showView('viewDetail');
   }
 
   // =========================================================
@@ -1085,6 +1276,12 @@
   const exoDesc      = document.getElementById('exoDesc');
   const exoCard      = document.getElementById('exoCard');
   const exoIcon      = document.getElementById('exoIcon');
+  const exoCues      = document.getElementById('exoCues');
+
+  function renderCues(cues) {
+    if (!cues || !cues.length) { exoCues.innerHTML = ''; return; }
+    exoCues.innerHTML = cues.map(c => `<span class="cue-key">▸</span>${c}`).join(' &nbsp; ');
+  }
   const upNext       = document.getElementById('upNext');
   const roundCur     = document.getElementById('roundCur');
   const roundTot     = document.getElementById('roundTot');
@@ -1212,6 +1409,9 @@
     // seance color context for svg weights
     exoCard.dataset.seance = state.program ? state.program.id : '';
 
+    // seance color context for svg weights
+    exoCard.dataset.seance = state.program ? state.program.id : '';
+
     if (step.type === 'ready') {
       phaseLabel.textContent = 'PRÊT ?';
       if (state.mode === 'seance') {
@@ -1221,12 +1421,14 @@
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = first.charge;
         exoDesc.textContent = first.desc;
-        upNext.innerHTML = `Tour <strong>1</strong> — 1er exercice dans 3…`;
+        renderCues(first.cues);
+        upNext.innerHTML = `Tour <strong>1</strong>/${FORMAT.rounds} — 1er exercice dans 3…`;
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent  = 'Préparez-vous';
         exoCharge.style.display = 'none';
         exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
+        renderCues(null);
         upNext.innerHTML = '';
       }
     }
@@ -1240,6 +1442,7 @@
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = step.exo.charge;
         exoDesc.textContent  = step.exo.desc;
+        renderCues(step.exo.cues);
         roundCur.textContent = step.round;
         const next = state.sequence[state.idx + 1];
         if (next && next.type === 'rest' && next.nextExo) {
@@ -1254,6 +1457,7 @@
         exoName.textContent   = 'TRAVAIL';
         exoCharge.style.display = 'none';
         exoDesc.textContent   = `Série ${step.repIndex} / ${step.repTotal}`;
+        renderCues(null);
         roundCur.textContent  = step.repIndex;
         upNext.innerHTML = '';
       }
@@ -1268,13 +1472,15 @@
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = step.nextExo.charge;
         exoDesc.textContent  = step.nextExo.desc;
+        renderCues(step.nextExo.cues);
         upNext.innerHTML = step.nextRound !== step.round
-          ? `Nouveau tour → <strong>Tour ${step.nextRound}</strong>` : '';
+          ? `Nouveau tour → <strong>Tour ${step.nextRound}/${FORMAT.rounds}</strong>` : '';
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent = 'Récupération';
         exoCharge.style.display = 'none';
         exoDesc.textContent = 'Respire, bois un peu d\'eau.';
+        renderCues(null);
         upNext.innerHTML = '';
       }
     }
