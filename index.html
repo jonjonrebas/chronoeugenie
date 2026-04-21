@@ -718,6 +718,76 @@
     color: var(--done);
   }
 
+  /* ---------- LOVE SCREEN ---------- */
+  #viewLove {
+    text-align: center;
+    padding: 40px 10px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+  .love-msg {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 14vw, 140px);
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    animation: loveFadeIn 0.6s ease;
+  }
+  .love-msg .pink { color: #ff5ea8; }
+  .love-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 9vw, 80px);
+    letter-spacing: 0.12em;
+    color: #ff5ea8;
+    margin-top: 6px;
+    animation: loveFadeIn 0.8s ease 0.15s both;
+  }
+  .love-hearts {
+    font-size: clamp(36px, 8vw, 64px);
+    letter-spacing: 0.08em;
+    margin-top: 24px;
+    line-height: 1;
+    animation: loveFadeIn 0.9s ease 0.3s both;
+  }
+  .love-hearts span {
+    display: inline-block;
+    animation: heartBeat 1.2s ease-in-out infinite;
+  }
+  .love-hearts span:nth-child(1) { animation-delay: 0s; }
+  .love-hearts span:nth-child(2) { animation-delay: 0.15s; }
+  .love-hearts span:nth-child(3) { animation-delay: 0.3s; }
+  .love-hearts span:nth-child(4) { animation-delay: 0.45s; }
+  .love-hearts span:nth-child(5) { animation-delay: 0.6s; }
+  .love-foot {
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+  .love-foot strong { color: var(--text); }
+  @keyframes loveFadeIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    20%      { transform: scale(1.25); }
+    40%      { transform: scale(1); }
+    60%      { transform: scale(1.15); }
+  }
+  #viewLove.active::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 45%, rgba(255,94,168,0.18), transparent 60%);
+    animation: loveFadeIn 0.8s ease;
+    z-index: -1;
+  }
+
   .breath-circle {
     width: 220px;
     height: 220px;
@@ -861,6 +931,18 @@
       </div>
       <button class="start-btn" onclick="startFree()" style="margin-top:20px;">▶ Démarrer</button>
     </section>
+  </section>
+
+  <!-- ======= VIEW: LOVE MESSAGE ======= -->
+  <section class="view" id="viewLove" onclick="skipLove()">
+    <div class="love-msg">VAS-Y <span class="pink">MON AMOUR</span></div>
+    <div class="love-sub">JE T'AIME</div>
+    <div class="love-hearts">
+      <span>❤</span><span>❤</span><span>❤</span><span>❤</span><span>❤</span>
+    </div>
+    <div class="love-foot">
+      Début dans <strong id="loveCount">5</strong>s &nbsp;·&nbsp; Touche pour commencer
+    </div>
   </section>
 
   <!-- ======= VIEW: ACTIVE WORKOUT ======= -->
@@ -1109,7 +1191,7 @@
   // =========================================================
   // NAVIGATION
   // =========================================================
-  const views = ['viewHome','viewDetail','viewFree','viewActive','viewEnd','viewFinisher','viewDone'];
+  const views = ['viewHome','viewDetail','viewFree','viewLove','viewActive','viewEnd','viewFinisher','viewDone'];
   function showView(id) {
     views.forEach(v => document.getElementById(v).classList.toggle('active', v === id));
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -1300,6 +1382,7 @@
   function stopAllTimers() {
     clearInterval(state.interval);
     clearInterval(finState.interval);
+    if (typeof loveTimer !== 'undefined') clearInterval(loveTimer);
     state.paused = false;
     releaseWakeLock();
   }
@@ -1366,6 +1449,32 @@
     pauseBtn.textContent = 'PAUSE';
     state.paused = false;
 
+    // message d'amour avant de lancer le timer
+    showLoveScreen();
+  }
+
+  // ---------- LOVE SCREEN ----------
+  let loveTimer = null;
+  function showLoveScreen() {
+    showView('viewLove');
+    let count = 5;
+    document.getElementById('loveCount').textContent = count;
+    clearInterval(loveTimer);
+    loveTimer = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        clearInterval(loveTimer);
+        startActualWorkout();
+      } else {
+        document.getElementById('loveCount').textContent = count;
+      }
+    }, 1000);
+  }
+  function skipLove() {
+    clearInterval(loveTimer);
+    startActualWorkout();
+  }
+  function startActualWorkout() {
     showView('viewActive');
     enterStep();
     runTimer();
