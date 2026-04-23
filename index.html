@@ -441,6 +441,44 @@
     margin-right: 4px;
   }
 
+  .objective-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent-c);
+    padding: 16px 18px;
+    margin-bottom: 22px;
+  }
+  .objective-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-c);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .objective-card ul { list-style: none; padding: 0; }
+  .objective-card li {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+  .objective-card li::before {
+    content: '●';
+    position: absolute;
+    left: 0;
+    color: var(--accent-c);
+    font-size: 8px;
+    top: 7px;
+  }
+  [data-seance="A"] .objective-card { border-left-color: var(--accent-a); }
+  [data-seance="A"] .objective-card h4,
+  [data-seance="A"] .objective-card li::before { color: var(--accent-a); }
+  [data-seance="B"] .objective-card { border-left-color: var(--accent-b); }
+  [data-seance="B"] .objective-card h4,
+  [data-seance="B"] .objective-card li::before { color: var(--accent-b); }
+
   .finisher-card {
     border: 1px dashed var(--line);
     padding: 18px;
@@ -870,6 +908,8 @@
       <div class="cell"><div class="k">Tours</div><div class="v" id="metaRounds">4</div></div>
     </div>
 
+    <div id="objectiveContainer"></div>
+
     <div class="section-title">Exercices</div>
     <div class="exercise-list" id="exerciseList"></div>
 
@@ -1125,38 +1165,44 @@
     },
     C: {
       id: 'C',
-      title: 'Full body + brûlage',
+      title: 'Full body (20 minutes)',
       color: 'var(--accent-c)',
+      objective: [
+        'Maximiser la dépense calorique tout en renforçant l\'ensemble du corps',
+        'Stimuler particulièrement les fessiers et le dos pour améliorer la silhouette',
+        'Renforcer le gainage profond pour un ventre plus plat',
+        'Séance courte mais très efficace, enchaînement fluide',
+      ],
       exercises: [
         {
           name: 'Swing kettlebell', icon: ICONS.swing,
           charge: 'Kettlebell 12 kg',
           desc: 'Kettlebell entre les jambes. Balance-la à hauteur des épaules en poussant avec les hanches.',
-          cues: ['Explosif', 'Hanches, pas les bras', 'Gainage actif']
+          cues: ['Mouvement explosif des hanches', 'Gainage actif, ventre rentré']
         },
         {
           name: 'Squat + presse', icon: ICONS.squatpress,
           charge: '2 × 6 kg',
           desc: 'Haltères aux épaules. Squat en bas, puis pousse au-dessus de la tête en remontant.',
-          cues: ['Pause en bas du squat', 'Contrôle tout le long', 'Gainage en poussant']
+          cues: ['Descente contrôlée', 'Pas de cambrure en haut']
         },
         {
-          name: 'Tirage élastique', icon: ICONS.band,
-          charge: 'Résistance forte',
-          desc: 'Élastique fixé devant toi. Tire les poignées vers le corps, coudes près des flancs.',
-          cues: ['Serre les omoplates', 'Pause 1 s en fin de tirage']
+          name: 'Rowing haltères', icon: ICONS.row,
+          charge: '2 × 10 kg (ou 6 kg si besoin)',
+          desc: 'Buste penché en avant, dos plat. Tire les haltères vers le nombril en serrant les omoplates.',
+          cues: ['Dos droit', 'Tirage avec les coudes', 'Pause en haut']
         },
         {
-          name: 'Step-up', icon: ICONS.stepup,
+          name: 'Fentes arrière alternées', icon: ICONS.lunge,
           charge: '2 × 6–10 kg',
-          desc: 'Devant une chaise solide ou un step. Monte avec une jambe, redescends, alterne.',
-          cues: ['Contrôle la descente', 'Pousse avec la jambe haute', 'Pas d\'élan']
+          desc: 'Debout, haltères le long du corps. Recule une jambe, descends le genou arrière, remonte. Alterne.',
+          cues: ['Grand pas vers l\'arrière', 'Poussée dans le talon avant', 'Buste légèrement penché']
         },
         {
-          name: 'Farmer walk', icon: ICONS.farmer,
+          name: 'Farmer hold statique', icon: ICONS.farmer,
           charge: '2 × 10 kg',
-          desc: 'Haltères dans chaque main, épaules basses, dos droit. Marche lentement pendant toute la phase.',
-          cues: ['Marche lente', 'Gainage maximal', 'Épaules basses, pas de déhanché']
+          desc: 'Debout immobile, une haltère dans chaque main, bras le long du corps. Tiens la position.',
+          cues: ['Position stable', 'Épaules basses', 'Ventre rentré en continu', 'Respiration lente et contrôlée']
         },
       ]
     }
@@ -1237,6 +1283,19 @@
     document.getElementById('metaWork').textContent   = FORMAT.work + 's';
     document.getElementById('metaRest').textContent   = FORMAT.rest + 's';
     document.getElementById('metaRounds').textContent = FORMAT.rounds;
+
+    // objectif optionnel
+    const objContainer = document.getElementById('objectiveContainer');
+    objContainer.dataset.seance = id;
+    if (currentProgram.objective && currentProgram.objective.length) {
+      objContainer.innerHTML = `
+        <div class="objective-card">
+          <h4>● Objectif de la séance</h4>
+          <ul>${currentProgram.objective.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>`;
+    } else {
+      objContainer.innerHTML = '';
+    }
 
     const list = document.getElementById('exerciseList');
     list.dataset.seance = id;
