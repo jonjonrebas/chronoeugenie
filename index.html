@@ -599,8 +599,21 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .active-head strong { color: var(--text); font-weight: 700; }
+  .active-head .pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .active-head .pill.exo {
+    border-color: var(--work);
+    color: var(--text);
+  }
+  .active-head .pill.exo strong { color: var(--work); }
 
   .phase-label {
     font-family: 'Bebas Neue', sans-serif;
@@ -988,8 +1001,9 @@
   <!-- ======= VIEW: ACTIVE WORKOUT ======= -->
   <section class="view" id="viewActive">
     <div class="active-head">
-      <span id="activeHeadLeft">SÉANCE —</span>
-      <span id="activeHeadRight">TOUR <strong id="roundCur">1</strong>/<strong id="roundTot">3</strong></span>
+      <span id="activeHeadLeft" class="pill">SÉANCE —</span>
+      <span class="pill exo">EXO <strong id="exoCur">1</strong>/<strong id="exoTot">5</strong></span>
+      <span id="activeHeadRight" class="pill">TOUR <strong id="roundCur">1</strong>/<strong id="roundTot">4</strong></span>
     </div>
 
     <div class="phase-label phase-ready" id="phaseLabel">PRÊT ?</div>
@@ -1374,14 +1388,21 @@
   updateFreeTotals();
 
   // =========================================================
-  // AUDIO — Web Audio beeps
+  // AUDIO — Web Audio beeps (boosted volume)
   // =========================================================
   let audioCtx = null;
+  let masterGain = null;
   function ensureAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 1.0;
+      masterGain.connect(audioCtx.destination);
+    }
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    primeAudioSession();
   }
-  function beep(freq = 880, duration = 0.15, type = 'sine', volume = 0.3) {
+  function beep(freq = 880, duration = 0.15, type = 'sine', volume = 0.7) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -1391,19 +1412,86 @@
     gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
     osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    gain.connect(masterGain || audioCtx.destination);
     osc.start();
     osc.stop(audioCtx.currentTime + duration);
   }
-  const beepCountdown = () => beep(660, 0.12, 'square', 0.25);
-  const beepWorkStart = () => { beep(1000, 0.25, 'square', 0.35); setTimeout(() => beep(1200, 0.3, 'square', 0.35), 180); };
-  const beepRestStart = () => beep(520, 0.4, 'sine', 0.3);
-  const beepFinish    = () => {
-    beep(880, 0.2, 'square', 0.35);
-    setTimeout(() => beep(1100, 0.2, 'square', 0.35), 220);
-    setTimeout(() => beep(1400, 0.45, 'square', 0.35), 440);
+  const beepCountdown = () => beep(880, 0.18, 'square', 0.6);
+  const beepWorkStart = () => {
+    beep(1000, 0.28, 'square', 0.8);
+    setTimeout(() => beep(1300, 0.35, 'square', 0.8), 180);
   };
-  const beepSoft      = () => beep(440, 0.25, 'sine', 0.2);
+  const beepRestStart = () => beep(520, 0.5, 'sine', 0.65);
+  const beepFinish    = () => {
+    beep(880, 0.22, 'square', 0.8);
+    setTimeout(() => beep(1100, 0.22, 'square', 0.8), 220);
+    setTimeout(() => beep(1400, 0.5, 'square', 0.8), 440);
+  };
+  const beepSoft      = () => beep(440, 0.3, 'sine', 0.5);
+
+  // =========================================================
+  // AUDIO SESSION KEEP-ALIVE (best-effort)
+  // Buffer audio silencieux qui tourne en boucle pour maintenir la session
+  // audio active (limite les coupures de son lors des changements de phase).
+  // =========================================================
+  let sessionSource = null;
+  function primeAudioSession() {
+    if (!audioCtx || sessionSource) return;
+    try {
+      const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = true;
+      const g = audioCtx.createGain();
+      g.gain.value = 0.0001;
+      src.connect(g).connect(audioCtx.destination);
+      src.start(0);
+      sessionSource = src;
+    } catch (e) {}
+  }
+
+  // =========================================================
+  // SPEECH — annonces vocales en français
+  // =========================================================
+  let frenchVoice = null;
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const voices = speechSynthesis.getVoices();
+    if (!voices || !voices.length) return;
+    // priorité : voix française "naturelle" (Amélie, Thomas, etc.) puis fallback fr
+    frenchVoice =
+      voices.find(v => v.lang && v.lang.toLowerCase().startsWith('fr-fr')) ||
+      voices.find(v => v.lang && v.lang.toLowerCase().startsWith('fr')) ||
+      null;
+  }
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function ensureSpeech() {
+    if (!('speechSynthesis' in window)) return;
+    // sur iOS, déclenche une utterance vide pour débloquer la synthèse au sein du geste utilisateur
+    try {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      u.lang = 'fr-FR';
+      speechSynthesis.speak(u);
+    } catch (e) {}
+    loadVoices();
+  }
+  function speak(text, opts = {}) {
+    if (!('speechSynthesis' in window) || !text) return;
+    try {
+      if (opts.interrupt !== false) speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'fr-FR';
+      u.rate = opts.rate || 1.05;
+      u.pitch = opts.pitch || 1.0;
+      u.volume = 1.0;
+      if (frenchVoice) u.voice = frenchVoice;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
 
   // =========================================================
   // TIMER — shared state & engine
@@ -1426,6 +1514,8 @@
   const upNext       = document.getElementById('upNext');
   const roundCur     = document.getElementById('roundCur');
   const roundTot     = document.getElementById('roundTot');
+  const exoCur       = document.getElementById('exoCur');
+  const exoTot       = document.getElementById('exoTot');
 
   let state = {
     mode: null,        // 'seance' | 'free'
@@ -1495,6 +1585,7 @@
   // =========================================================
   function startSeance() {
     ensureAudio();
+    ensureSpeech();
     requestWakeLock();
     state.mode = 'seance';
     state.program = currentProgram;
@@ -1504,6 +1595,8 @@
     document.getElementById('activeHeadLeft').textContent = 'SÉANCE ' + currentProgram.id;
     roundTot.textContent = FORMAT.rounds;
     roundCur.textContent = 1;
+    exoTot.textContent   = currentProgram.exercises.length;
+    exoCur.textContent   = 1;
     document.getElementById('headerTag').textContent = 'Séance ' + currentProgram.id + ' en cours';
     pauseBtn.textContent = 'PAUSE';
     state.paused = false;
@@ -1541,6 +1634,7 @@
 
   function startFree() {
     ensureAudio();
+    ensureSpeech();
     requestWakeLock();
     const reps = parseInt(inputs.reps.value) || 1;
     const work = parseInt(inputs.work.value) || 1;
@@ -1584,13 +1678,18 @@
       phaseLabel.textContent = 'PRÊT ?';
       if (state.mode === 'seance') {
         const first = state.program.exercises[0];
+        const total = state.program.exercises.length;
         exoIcon.innerHTML    = first.icon || '';
         exoName.textContent  = 'À suivre : ' + first.name;
         exoCharge.style.display = 'inline-block';
         exoCharge.textContent = first.charge;
         exoDesc.textContent = first.desc;
         renderCues(first.cues);
+        exoCur.textContent = 1;
+        exoTot.textContent = total;
+        roundCur.textContent = 1;
         upNext.innerHTML = `Tour <strong>1</strong>/${FORMAT.rounds} — 1er exercice dans 3…`;
+        speak(`C'est parti ! Premier exercice : ${first.name}`);
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent  = 'Préparez-vous';
@@ -1598,6 +1697,7 @@
         exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
         renderCues(null);
         upNext.innerHTML = '';
+        speak("C'est parti !");
       }
     }
 
@@ -1605,6 +1705,7 @@
       phaseLabel.textContent = 'GO !';
       beepWorkStart();
       if (step.exo) {
+        const total = state.program.exercises.length;
         exoIcon.innerHTML    = step.exo.icon || '';
         exoName.textContent  = step.exo.name;
         exoCharge.style.display = 'inline-block';
@@ -1612,6 +1713,8 @@
         exoDesc.textContent  = step.exo.desc;
         renderCues(step.exo.cues);
         roundCur.textContent = step.round;
+        exoCur.textContent   = step.exoIndex;
+        exoTot.textContent   = total;
         const next = state.sequence[state.idx + 1];
         if (next && next.type === 'rest' && next.nextExo) {
           upNext.innerHTML = `Suivant : <strong>${next.nextExo.name}</strong>`;
@@ -1620,6 +1723,8 @@
         } else {
           upNext.innerHTML = '';
         }
+        // annonce vocale : "Exercice 2 sur 5, Hip thrust"
+        speak(`Exercice ${step.exoIndex} sur ${total}, ${step.exo.name}`);
       } else if (step.free) {
         exoIcon.innerHTML    = '';
         exoName.textContent   = 'TRAVAIL';
@@ -1628,6 +1733,7 @@
         renderCues(null);
         roundCur.textContent  = step.repIndex;
         upNext.innerHTML = '';
+        speak(`Série ${step.repIndex} sur ${step.repTotal}`);
       }
     }
 
@@ -1641,8 +1747,15 @@
         exoCharge.textContent = step.nextExo.charge;
         exoDesc.textContent  = step.nextExo.desc;
         renderCues(step.nextExo.cues);
-        upNext.innerHTML = step.nextRound !== step.round
+        const newRound = step.nextRound !== step.round;
+        upNext.innerHTML = newRound
           ? `Nouveau tour → <strong>Tour ${step.nextRound}/${FORMAT.rounds}</strong>` : '';
+        // annonce vocale
+        if (newRound) {
+          speak(`Repos. Tour ${step.nextRound}, prochain exercice : ${step.nextExo.name}`);
+        } else {
+          speak(`Repos. Prochain : ${step.nextExo.name}`);
+        }
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent = 'Récupération';
@@ -1650,6 +1763,7 @@
         exoDesc.textContent = 'Respire, bois un peu d\'eau.';
         renderCues(null);
         upNext.innerHTML = '';
+        speak('Repos');
       }
     }
 
@@ -1692,6 +1806,7 @@
   function finishSession() {
     clearInterval(state.interval);
     beepFinish();
+    speak('Bravo, séance principale terminée !');
     if (state.mode === 'seance') {
       // offer finisher
       showView('viewEnd');
