@@ -1689,7 +1689,6 @@
         exoTot.textContent = total;
         roundCur.textContent = 1;
         upNext.innerHTML = `Tour <strong>1</strong>/${FORMAT.rounds} — 1er exercice dans 3…`;
-        speak(`C'est parti ! Premier exercice : ${first.name}`);
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent  = 'Préparez-vous';
@@ -1697,7 +1696,6 @@
         exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
         renderCues(null);
         upNext.innerHTML = '';
-        speak("C'est parti !");
       }
     }
 
@@ -1723,8 +1721,6 @@
         } else {
           upNext.innerHTML = '';
         }
-        // annonce vocale : "Exercice 2 sur 5, Hip thrust"
-        speak(`Exercice ${step.exoIndex} sur ${total}, ${step.exo.name}`);
       } else if (step.free) {
         exoIcon.innerHTML    = '';
         exoName.textContent   = 'TRAVAIL';
@@ -1733,7 +1729,6 @@
         renderCues(null);
         roundCur.textContent  = step.repIndex;
         upNext.innerHTML = '';
-        speak(`Série ${step.repIndex} sur ${step.repTotal}`);
       }
     }
 
@@ -1750,12 +1745,6 @@
         const newRound = step.nextRound !== step.round;
         upNext.innerHTML = newRound
           ? `Nouveau tour → <strong>Tour ${step.nextRound}/${FORMAT.rounds}</strong>` : '';
-        // annonce vocale
-        if (newRound) {
-          speak(`Repos. Tour ${step.nextRound}, prochain exercice : ${step.nextExo.name}`);
-        } else {
-          speak(`Repos. Prochain : ${step.nextExo.name}`);
-        }
       } else {
         exoIcon.innerHTML    = '';
         exoName.textContent = 'Récupération';
@@ -1763,7 +1752,6 @@
         exoDesc.textContent = 'Respire, bois un peu d\'eau.';
         renderCues(null);
         upNext.innerHTML = '';
-        speak('Repos');
       }
     }
 
@@ -1806,7 +1794,6 @@
   function finishSession() {
     clearInterval(state.interval);
     beepFinish();
-    speak('Bravo, séance principale terminée !');
     if (state.mode === 'seance') {
       // offer finisher
       showView('viewEnd');
