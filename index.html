@@ -270,6 +270,32 @@
 
   .exercise-list { margin-bottom: 24px; }
 
+  .bloc-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 22px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .bloc-header:first-child { margin-top: 0; }
+  .bloc-header strong { color: var(--text); font-size: 12px; }
+
+  .rest-divider {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    padding: 8px 0 16px;
+  }
+  .rest-divider strong { color: var(--text); }
+
   .exercise {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -347,6 +373,13 @@
     margin-bottom: 6px;
   }
 
+  .pill-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
   .exercise .charge {
     display: inline-block;
     font-family: 'JetBrains Mono', monospace;
@@ -355,7 +388,18 @@
     background: var(--work);
     padding: 3px 8px;
     letter-spacing: 0.08em;
-    margin-bottom: 8px;
+    margin-bottom: 0;
+  }
+
+  .reps-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
   }
 
   .exercise .desc {
@@ -399,7 +443,7 @@
     background: var(--surface);
     border: 1px solid var(--line);
     padding: 12px 16px;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
   }
   .format-toggle .format-label {
     font-family: 'JetBrains Mono', monospace;
@@ -427,6 +471,16 @@
   .toggle-btn.active { background: var(--work); color: var(--bg); }
   .toggle-btn:hover:not(.active) { color: var(--text); background: var(--surface-2); }
 
+  .format-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    margin: 0 0 20px;
+    padding: 0 2px;
+  }
+
   .exo-card .exo-cues {
     margin-top: 8px;
     font-family: 'JetBrains Mono', monospace;
@@ -440,44 +494,6 @@
     color: var(--work);
     margin-right: 4px;
   }
-
-  .objective-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--accent-c);
-    padding: 16px 18px;
-    margin-bottom: 22px;
-  }
-  .objective-card h4 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--accent-c);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .objective-card ul { list-style: none; padding: 0; }
-  .objective-card li {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.5;
-    padding: 4px 0 4px 16px;
-    position: relative;
-  }
-  .objective-card li::before {
-    content: '●';
-    position: absolute;
-    left: 0;
-    color: var(--accent-c);
-    font-size: 8px;
-    top: 7px;
-  }
-  [data-seance="A"] .objective-card { border-left-color: var(--accent-a); }
-  [data-seance="A"] .objective-card h4,
-  [data-seance="A"] .objective-card li::before { color: var(--accent-a); }
-  [data-seance="B"] .objective-card { border-left-color: var(--accent-b); }
-  [data-seance="B"] .objective-card h4,
-  [data-seance="B"] .objective-card li::before { color: var(--accent-b); }
 
   .finisher-card {
     border: 1px dashed var(--line);
@@ -636,11 +652,28 @@
     text-align: center;
     min-height: 130px;
   }
+  .exo-card .exo-pos {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    min-height: 14px;
+  }
   .exo-card .exo-name {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(32px, 7vw, 48px);
     line-height: 1;
     letter-spacing: 0.04em;
+  }
+  .exo-pill-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0 10px;
   }
   .exo-card .exo-charge {
     display: inline-block;
@@ -650,9 +683,20 @@
     background: var(--work);
     padding: 3px 10px;
     letter-spacing: 0.08em;
-    margin: 8px 0 10px;
+    margin: 0;
   }
   .exo-card.rest .exo-charge { background: var(--rest); }
+  .exo-card .exo-reps {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 3px 10px;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
   .exo-card .exo-desc {
     font-size: 13px;
     color: var(--muted);
@@ -889,8 +933,8 @@
   <!-- ======= VIEW: HOME ======= -->
   <section class="view active" id="viewHome">
     <div class="equipment-banner">
-      <strong>PROGRAMME MAISON</strong> · 3 séances / semaine · format circuit · 20 min efficaces<br>
-      <strong>MATÉRIEL</strong> · Petites haltères (6 à 10 kg), une kettlebell 12 kg, un élastique fort, un tapis.
+      <strong>PROGRAMME MAISON</strong> · 3 séances / semaine · blocs de 2 exercices en superset · ~20 min efficaces<br>
+      <strong>MATÉRIEL</strong> · Kettlebell 12 kg · Haltères 6 kg, 10 kg et 2×10 kg · Une chaise · Un tapis · Élastique (optionnel).
     </div>
     <div class="section-title">Ton programme — Choisis ta séance</div>
     <div class="program-grid" id="programGrid"></div>
@@ -908,20 +952,19 @@
     </div>
 
     <div class="format-toggle">
-      <span class="format-label">FORMAT TEMPS</span>
-      <div class="toggle-group" id="formatToggle">
-        <button class="toggle-btn active" data-idx="0" onclick="setFormat(0)">40 / 20</button>
-        <button class="toggle-btn" data-idx="1" onclick="setFormat(1)">45 / 15</button>
+      <span class="format-label">BLOC 2 — TOURS</span>
+      <div class="toggle-group" id="bloc2Toggle">
+        <button class="toggle-btn active" data-tours="3" onclick="setBloc2Tours(3)">3</button>
+        <button class="toggle-btn" data-tours="2" onclick="setBloc2Tours(2)">2</button>
       </div>
     </div>
+    <p class="format-hint">Si le temps manque, réduis les tours — jamais les repos. Un repos raccourci, c'est moins de charge ou moins de reps au tour suivant : une baisse de stimulus déguisée, pas une intensification.</p>
 
     <div class="seance-meta">
-      <div class="cell"><div class="k">Travail</div><div class="v" id="metaWork">40s</div></div>
-      <div class="cell"><div class="k">Repos</div><div class="v" id="metaRest">20s</div></div>
-      <div class="cell"><div class="k">Tours</div><div class="v" id="metaRounds">4</div></div>
+      <div class="cell"><div class="k">Blocs</div><div class="v" id="metaBlocs">2</div></div>
+      <div class="cell"><div class="k">Exercices</div><div class="v" id="metaExos">4</div></div>
+      <div class="cell"><div class="k">Durée</div><div class="v" id="metaDuree">—</div></div>
     </div>
-
-    <div id="objectiveContainer"></div>
 
     <div class="section-title">Exercices</div>
     <div class="exercise-list" id="exerciseList"></div>
@@ -998,20 +1041,48 @@
     </div>
   </section>
 
+  <!-- ======= VIEW: WARM-UP ======= -->
+  <section class="view" id="viewWarmup">
+    <div class="active-head">
+      <span class="pill">ÉCHAUFFEMENT</span>
+      <span class="pill exo">ÉTAPE <strong id="warmupCur">1</strong>/<strong id="warmupTot">7</strong></span>
+    </div>
+
+    <div class="phase-label phase-done" id="warmupPhaseLabel">ÉCHAUFFEMENT</div>
+
+    <div class="exo-card" id="warmupCard">
+      <div class="exo-name" id="warmupName">—</div>
+      <div class="exo-desc" id="warmupDesc">—</div>
+    </div>
+
+    <div class="time-display" id="warmupTime">—</div>
+    <div class="progress-bar"><div class="progress-fill done" id="warmupProgress"></div></div>
+    <div class="up-next">Pas d'étirement statique avant — on monte en température.</div>
+
+    <div class="controls">
+      <button class="ctrl-btn" onclick="skipWarmup()">PASSER</button>
+      <button class="ctrl-btn danger" onclick="stopSession()">ARRÊTER</button>
+    </div>
+  </section>
+
   <!-- ======= VIEW: ACTIVE WORKOUT ======= -->
   <section class="view" id="viewActive">
     <div class="active-head">
       <span id="activeHeadLeft" class="pill">SÉANCE —</span>
-      <span class="pill exo">EXO <strong id="exoCur">1</strong>/<strong id="exoTot">5</strong></span>
-      <span id="activeHeadRight" class="pill">TOUR <strong id="roundCur">1</strong>/<strong id="roundTot">4</strong></span>
+      <span class="pill exo">BLOC <strong id="blocCur">1</strong>/<strong id="blocTot">2</strong></span>
+      <span id="activeHeadRight" class="pill">TOUR <strong id="roundCur">1</strong>/<strong id="roundTot">3</strong></span>
     </div>
 
     <div class="phase-label phase-ready" id="phaseLabel">PRÊT ?</div>
 
     <div class="exo-card" id="exoCard">
       <div class="icon-big" id="exoIcon"></div>
+      <div class="exo-pos" id="exoPos"></div>
       <div class="exo-name" id="exoName">—</div>
-      <div class="exo-charge" id="exoCharge" style="display:none;">—</div>
+      <div class="exo-pill-row">
+        <div class="exo-charge" id="exoCharge" style="display:none;">—</div>
+        <div class="exo-reps" id="exoReps" style="display:none;">—</div>
+      </div>
       <div class="exo-desc" id="exoDesc">—</div>
       <div class="exo-cues" id="exoCues"></div>
     </div>
@@ -1086,172 +1157,174 @@
     hipthrust: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="15" cy="74" r="6"/><path d="M22 72 L60 48"/><path d="M60 48 L75 68"/><path d="M75 68 L75 88"/><rect class="wt" x="50" y="40" width="20" height="7"/></svg>`,
     lunge: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="48" cy="18" r="6"/><path d="M48 24 L48 54"/><path d="M48 54 L42 74 L42 88"/><path d="M48 54 L68 78 L78 88"/><path d="M46 32 L30 52"/><path d="M50 32 L66 52"/><rect class="wt" x="22" y="48" width="12" height="7"/><rect class="wt" x="62" y="48" width="12" height="7"/></svg>`,
     deadlift: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="66" cy="22" r="6"/><path d="M61 26 L42 52"/><path d="M42 52 L40 88"/><path d="M42 52 L50 88"/><path d="M44 50 L44 76"/><circle class="wt-fill" cx="44" cy="82" r="7"/><path d="M40 76 Q44 70 48 76" stroke="currentColor"/></svg>`,
-    deadbug: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="88" x2="95" y2="88"/><circle cx="18" cy="68" r="6"/><path d="M24 68 L70 68"/><path d="M38 68 L32 82"/><path d="M52 68 L52 38"/><path d="M70 68 L76 38"/><path d="M70 68 L80 78 L74 86"/></svg>`,
     row: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="22" cy="30" r="6"/><path d="M28 33 L66 40"/><path d="M66 40 L68 88"/><path d="M66 40 L76 88"/><path d="M48 38 L48 58"/><path d="M48 58 L58 48"/><rect class="wt" x="44" y="54" width="14" height="7" transform="rotate(-35 51 57)"/></svg>`,
     press: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="34" r="6"/><path d="M50 40 L50 64"/><path d="M50 64 L42 88"/><path d="M50 64 L58 88"/><path d="M44 42 L36 18"/><path d="M56 42 L64 18"/><rect class="wt" x="26" y="12" width="18" height="7"/><rect class="wt" x="56" y="12" width="18" height="7"/><path d="M22 58 L22 36" stroke-dasharray="3 3" opacity="0.5"/><path d="M78 58 L78 36" stroke-dasharray="3 3" opacity="0.5"/></svg>`,
-    curl: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="18" r="6"/><path d="M50 24 L50 58"/><path d="M50 58 L42 88"/><path d="M50 58 L58 88"/><path d="M44 30 L38 50"/><path d="M56 30 L62 50"/><path d="M38 50 L46 32"/><path d="M62 50 L54 32"/><rect class="wt" x="36" y="26" width="14" height="7"/><rect class="wt" x="50" y="26" width="14" height="7"/></svg>`,
-    triceps: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="24" r="6"/><path d="M50 30 L50 60"/><path d="M50 60 L42 88"/><path d="M50 60 L58 88"/><path d="M46 32 L50 14"/><path d="M50 14 L54 32"/><rect class="wt" x="40" y="6" width="20" height="8"/></svg>`,
     plank: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="86" x2="95" y2="86"/><circle cx="16" cy="56" r="6"/><path d="M22 58 L72 74"/><path d="M28 60 L28 80"/><circle class="wt-fill" cx="70" cy="80" r="4"/><path d="M70 80 L88 84"/></svg>`,
     swing: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="38" cy="22" r="6"/><path d="M38 28 L44 58"/><path d="M44 58 L36 88"/><path d="M44 58 L54 88"/><path d="M40 34 L72 42"/><circle class="wt-fill" cx="78" cy="44" r="7"/><path d="M76 38 Q80 34 82 38" stroke="currentColor" fill="none" stroke-width="1.5"/><path d="M26 66 Q45 34 76 44" stroke-dasharray="3 3" opacity="0.5"/></svg>`,
-    squatpress: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="30" r="6"/><path d="M50 36 L50 62"/><path d="M50 62 L42 88"/><path d="M50 62 L58 88"/><path d="M46 38 L40 16"/><path d="M54 38 L60 16"/><rect class="wt" x="30" y="10" width="16" height="7"/><rect class="wt" x="54" y="10" width="16" height="7"/><path d="M22 58 L22 34" stroke-dasharray="3 3" opacity="0.6"/><path d="M78 58 L78 34" stroke-dasharray="3 3" opacity="0.6"/></svg>`,
-    band: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="26" cy="22" r="6"/><path d="M26 28 L26 58"/><path d="M26 58 L20 88"/><path d="M26 58 L32 88"/><path d="M26 36 L52 42"/><path d="M52 42 Q62 34 70 44 T 88 38" stroke-dasharray="2 2"/><rect class="wt" x="86" y="34" width="6" height="14"/></svg>`,
     stepup: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><rect class="wt" x="56" y="66" width="34" height="22" opacity="0.3"/><rect x="56" y="66" width="34" height="22" stroke="currentColor" fill="none"/><circle cx="38" cy="22" r="6"/><path d="M38 28 L38 58"/><path d="M38 58 L58 66"/><path d="M38 58 L34 88"/><path d="M36 36 L26 56"/><path d="M40 36 L48 56"/></svg>`,
-    farmer: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><circle cx="50" cy="16" r="6"/><path d="M50 22 L50 58"/><path d="M50 58 L44 88"/><path d="M50 58 L56 88"/><path d="M46 28 L36 60"/><path d="M54 28 L64 60"/><rect class="wt" x="28" y="56" width="16" height="10"/><rect class="wt" x="56" y="56" width="16" height="10"/></svg>`,
+    pushup: `<svg class="ex-svg" viewBox="0 0 100 100"><line class="mat" x1="5" y1="92" x2="95" y2="92"/><rect class="wt" x="8" y="70" width="24" height="12" opacity="0.5"/><circle cx="22" cy="60" r="6"/><path d="M26 64 L80 82"/><path d="M26 64 L16 76"/><path d="M80 82 L90 88"/></svg>`,
   };
 
   // =========================================================
-  // DATA — PROGRAMME (maison · 3 séances / semaine · 20 min)
+  // DATA — PROGRAMME (maison · 3 séances / semaine · 2 blocs en superset)
   // =========================================================
   const PROGRAMS = {
     A: {
       id: 'A',
-      title: 'Bas du corps + ventre plat',
+      title: 'Dominante genou',
       color: 'var(--accent-a)',
-      exercises: [
+      blocks: [
         {
-          name: 'Squat', icon: ICONS.squat,
-          charge: '2 × 10 kg  ou  KB 12 kg (goblet)',
-          desc: "Debout, pieds largeur bassin. Descends en t'asseyant, puis remonte en poussant sur les talons.",
-          cues: ['Descente lente (3 s)', 'Pause 1 s en bas', 'Genoux ouverts, poids dans les talons', 'Ventre légèrement rentré']
+          label: 'BLOC 1',
+          tours: 3,
+          restBetweenTours: 75,
+          exercises: [
+            {
+              name: 'Goblet squat', icon: ICONS.squat,
+              charge: 'Kettlebell 12 kg', reps: '8-10 reps', workSec: 45, restAfterSec: 25,
+              desc: "Kettlebell tenue contre la poitrine à deux mains. Descends en t'asseyant entre les talons, coudes à l'intérieur des genoux.",
+              cues: ['Descente lente, poitrine haute', 'Genoux dans l\'axe des pieds', 'Pousse le sol pour remonter']
+            },
+            {
+              name: 'Rowing unilatéral', icon: ICONS.row,
+              charge: 'Haltère 10 kg', reps: '8-10 par bras', workSec: 55,
+              desc: 'Un genou et une main en appui (banc, chaise ou canapé), dos plat. Tire l\'haltère vers la hanche en serrant l\'omoplate.',
+              cues: ['Dos plat, regard vers le sol', 'Tire avec le coude, pas la main', 'Pause 1 s en haut, puis change de bras']
+            }
+          ]
         },
         {
-          name: 'Hip thrust', icon: ICONS.hipthrust,
-          charge: 'Kettlebell 12 kg',
-          desc: 'Dos au sol, pieds à plat, kettlebell sur le bassin. Monte les hanches en contractant les fessiers.',
-          cues: ['Pause 2 s en haut', 'Rétroversion du bassin (clé ventre plat)', 'Ne cambre pas le bas du dos']
-        },
-        {
-          name: 'Fentes arrière', icon: ICONS.lunge,
-          charge: '2 × 6 kg  ou  2 × 10 kg',
-          desc: 'Debout, haltères le long du corps. Recule une jambe et descends le genou arrière vers le sol.',
-          cues: ['Buste légèrement penché', 'Descente lente', 'Pousse avec le talon avant']
-        },
-        {
-          name: 'Deadlift kettlebell', icon: ICONS.deadlift,
-          charge: 'Kettlebell 12 kg',
-          desc: 'Kettlebell au sol entre les pieds. Penche-toi, remonte en poussant le sol et les hanches.',
-          cues: ['Dos neutre', 'Mouvement lent et contrôlé', 'Kettlebell proche du corps']
-        },
-        {
-          name: 'Dead bug', icon: ICONS.deadbug,
-          charge: 'Poids du corps',
-          desc: 'Allongé sur le dos, bras et jambes en l\'air. Tends bras + jambe opposés lentement, puis alterne.',
-          cues: ['Très lent', 'Expire fort en tendant la jambe', 'Bas du dos plaqué au sol']
-        },
+          label: 'BLOC 2',
+          tours: 3,
+          restBetweenTours: 45,
+          exercises: [
+            {
+              name: 'Hip thrust au sol', icon: ICONS.hipthrust,
+              charge: 'Kettlebell 12 kg', reps: '12-15 reps', workSec: 40, restAfterSec: 20,
+              desc: 'Dos au sol, genoux pliés, kettlebell calée sur le bassin. Monte les hanches en poussant dans les talons.',
+              cues: ['Rétroversion du bassin en haut', 'Fessiers serrés, pas de cambrure', 'Pause 1-2 s en haut']
+            },
+            {
+              name: 'Planche', icon: ICONS.plank,
+              charge: 'Poids du corps', reps: '30-40 s', workSec: 40,
+              desc: 'Avant-bras et pointes de pieds au sol, ligne droite des épaules aux talons.',
+              cues: ['Ventre rentré, fessiers serrés', 'Ne laisse pas les hanches tomber', 'Respiration régulière']
+            }
+          ]
+        }
       ]
     },
     B: {
       id: 'B',
-      title: 'Haut du corps + gainage',
+      title: 'Dominante hanche',
       color: 'var(--accent-b)',
-      exercises: [
+      blocks: [
         {
-          name: 'Rowing haltères', icon: ICONS.row,
-          charge: '2 × 6–10 kg',
-          desc: 'Buste penché en avant, dos plat. Tire les haltères vers le nombril en serrant les omoplates.',
-          cues: ['Pause 2 s en haut', 'Tire avec les coudes, pas avec les mains']
+          label: 'BLOC 1',
+          tours: 3,
+          restBetweenTours: 75,
+          exercises: [
+            {
+              name: 'Soulevé de terre roumain', icon: ICONS.deadlift,
+              charge: '2 × 10 kg', reps: '10-12 reps', workSec: 45, restAfterSec: 30,
+              desc: 'Haltères devant les cuisses, jambes presque tendues. Pousse les hanches en arrière en gardant le dos plat, haltères proches des jambes.',
+              cues: ['Dos neutre, pas de rond', 'Recule les hanches, pas les genoux', 'Sens l\'étirement à l\'arrière des cuisses']
+            },
+            {
+              name: 'Développé au sol', icon: ICONS.press,
+              charge: '2 × 6 kg', reps: '8-10 reps', workSec: 40,
+              desc: 'Allongée sur le dos, genoux pliés, haltères aux épaules coudes à 45°. Pousse vers le plafond sans verrouiller les coudes.',
+              cues: ['Omoplates plaquées au sol', 'Trajectoire légèrement en arc', 'Expire en poussant']
+            }
+          ]
         },
         {
-          name: 'Développé épaules', icon: ICONS.press,
-          charge: '2 × 6 kg',
-          desc: 'Haltères aux épaules. Pousse au-dessus de la tête sans cambrer le dos.',
-          cues: ['Gainage serré', 'Pas de cambrure', 'Expire en poussant']
-        },
-        {
-          name: 'Curl biceps', icon: ICONS.curl,
-          charge: '2 × 6 kg',
-          desc: 'Debout, bras le long du corps. Monte les haltères en pliant les coudes, sans bouger les bras.',
-          cues: ['Contrôle total', 'Pas d\'élan', 'Descente lente']
-        },
-        {
-          name: 'Extension triceps', icon: ICONS.triceps,
-          charge: '1 × 6–10 kg (2 mains)',
-          desc: 'Une haltère tenue à deux mains derrière la tête, coudes hauts. Tends les bras vers le plafond.',
-          cues: ['Coudes fixes', 'Mouvement lent', 'Ne descends pas trop bas']
-        },
-        {
-          name: 'Planche genoux', icon: ICONS.plank,
-          charge: 'Poids du corps',
-          desc: 'Sur le tapis, appuie-toi sur les avant-bras et les genoux. Ligne droite des épaules aux genoux.',
-          cues: ['Bassin légèrement rentré', 'Ventre aspiré (transverse actif)', 'Fessiers serrés']
-        },
+          label: 'BLOC 2',
+          tours: 3,
+          restBetweenTours: 45,
+          exercises: [
+            {
+              name: 'Fente arrière alternée', icon: ICONS.lunge,
+              charge: '2 × 6 kg', reps: '10 par jambe', workSec: 50, restAfterSec: 20,
+              desc: 'Haltères le long du corps. Recule une jambe, descends le genou arrière vers le sol, reviens, alterne le côté.',
+              cues: ['Grand pas vers l\'arrière', 'Buste droit, léger penché avant', 'Pousse dans le talon avant']
+            },
+            {
+              name: 'Pompes', icon: ICONS.pushup,
+              charge: 'Poids du corps', reps: 'À 2 reps de l\'échec', workSec: 40,
+              desc: 'Mains sur le canapé ou une table si besoin pour réduire la charge. Descends poitrine vers l\'appui, coudes à 45°.',
+              cues: ['Corps gainé, pas de creux du dos', 'Descends jusqu\'à 2 reps de l\'échec', 'Contrôle la remontée']
+            }
+          ]
+        }
       ]
     },
     C: {
       id: 'C',
-      title: 'Full body (20 minutes)',
+      title: 'Unilatéral',
       color: 'var(--accent-c)',
-      objective: [
-        'Maximiser la dépense calorique tout en renforçant l\'ensemble du corps',
-        'Stimuler particulièrement les fessiers et le dos pour améliorer la silhouette',
-        'Renforcer le gainage profond pour un ventre plus plat',
-        'Séance courte mais très efficace, enchaînement fluide',
-      ],
-      exercises: [
+      blocks: [
         {
-          name: 'Swing kettlebell', icon: ICONS.swing,
-          charge: 'Kettlebell 12 kg',
-          desc: 'Kettlebell entre les jambes. Balance-la à hauteur des épaules en poussant avec les hanches.',
-          cues: ['Mouvement explosif des hanches', 'Gainage actif, ventre rentré']
+          label: 'BLOC 1',
+          tours: 3,
+          restBetweenTours: 75,
+          exercises: [
+            {
+              name: 'Split squat bulgare', icon: ICONS.stepup,
+              charge: '2 × 6 kg', reps: '8 par jambe', workSec: 55, restAfterSec: 30,
+              desc: 'Pied arrière posé sur une chaise, haltères le long du corps. Descends à la verticale sur la jambe avant.',
+              cues: ['Buste droit, léger penché avant', 'Genou avant dans l\'axe du pied', 'Pousse dans le talon avant, puis change de jambe']
+            },
+            {
+              name: 'Rowing penché', icon: ICONS.row,
+              charge: '2 haltères ou élastique', reps: '10-12 reps', workSec: 45,
+              desc: 'Buste penché, dos plat, haltères (ou élastique sous les pieds). Tire vers le nombril en serrant les omoplates.',
+              cues: ['Dos plat tout du long', 'Tire avec les coudes', 'Pause 1 s en haut']
+            }
+          ]
         },
         {
-          name: 'Squat + presse', icon: ICONS.squatpress,
-          charge: '2 × 6 kg',
-          desc: 'Haltères aux épaules. Squat en bas, puis pousse au-dessus de la tête en remontant.',
-          cues: ['Descente contrôlée', 'Pas de cambrure en haut']
-        },
-        {
-          name: 'Rowing haltères', icon: ICONS.row,
-          charge: '2 × 10 kg (ou 6 kg si besoin)',
-          desc: 'Buste penché en avant, dos plat. Tire les haltères vers le nombril en serrant les omoplates.',
-          cues: ['Dos droit', 'Tirage avec les coudes', 'Pause en haut']
-        },
-        {
-          name: 'Fentes arrière alternées', icon: ICONS.lunge,
-          charge: '2 × 6–10 kg',
-          desc: 'Debout, haltères le long du corps. Recule une jambe, descends le genou arrière, remonte. Alterne.',
-          cues: ['Grand pas vers l\'arrière', 'Poussée dans le talon avant', 'Buste légèrement penché']
-        },
-        {
-          name: 'Farmer hold statique', icon: ICONS.farmer,
-          charge: '2 × 10 kg',
-          desc: 'Debout immobile, une haltère dans chaque main, bras le long du corps. Tiens la position.',
-          cues: ['Position stable', 'Épaules basses', 'Ventre rentré en continu', 'Respiration lente et contrôlée']
-        },
+          label: 'BLOC 2',
+          tours: 3,
+          restBetweenTours: 45,
+          exercises: [
+            {
+              name: 'Swing kettlebell', icon: ICONS.swing,
+              charge: 'Kettlebell 12 kg', reps: '15 reps', workSec: 35, restAfterSec: 30,
+              desc: 'Kettlebell entre les jambes, léger fléchi. Bascule les hanches en arrière puis extension explosive pour projeter la kettlebell à hauteur d\'épaules.',
+              cues: ['L\'énergie part des hanches, pas des bras', 'Gainage actif tout du long', 'Ne monte pas les bras activement']
+            },
+            {
+              name: 'Gainage latéral', icon: ICONS.plank,
+              charge: 'Poids du corps', reps: '25 s par côté', workSec: 50, switchAtSec: 25,
+              desc: 'Appui sur un avant-bras, corps aligné sur le côté, pieds empilés ou décalés. Tiens la position, change de côté à mi-temps.',
+              cues: ['Hanches hautes, pas d\'affaissement', 'Ventre gainé', 'Un bip signale le changement de côté']
+            }
+          ]
+        }
       ]
     }
   };
 
-  // 2 presets sélectionnables par l'utilisatrice
-  const FORMAT_PRESETS = [
-    { work: 40, rest: 20 },
-    { work: 45, rest: 15 },
-  ];
-  let formatIndex = 0; // 0 = 40/20 (défaut), 1 = 45/15
-  const ROUNDS = 4;
-  function currentFormat() {
-    const p = FORMAT_PRESETS[formatIndex];
-    return { work: p.work, rest: p.rest, rounds: ROUNDS };
-  }
-  // alias pour compat
-  const FORMAT = new Proxy({}, { get: (_, k) => currentFormat()[k] });
-
-  function setFormat(idx) {
-    formatIndex = idx;
-    // update toggle UI
-    document.querySelectorAll('#formatToggle .toggle-btn').forEach(b => {
-      b.classList.toggle('active', parseInt(b.dataset.idx) === idx);
+  // Bloc 2 : 3 tours par défaut, 2 tours si le temps manque (jamais les repos)
+  let bloc2Tours = 3;
+  function setBloc2Tours(n) {
+    bloc2Tours = n;
+    document.querySelectorAll('#bloc2Toggle .toggle-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.tours) === n);
     });
-    // re-render detail if open
     if (currentProgram) openDetail(currentProgram.id, true);
-    // re-render home cards
     renderHome();
+  }
+
+  function posLabel(blockIndex, posIndex) {
+    return (blockIndex + 1) + (posIndex === 0 ? 'A' : 'B');
   }
 
   // =========================================================
   // NAVIGATION
   // =========================================================
-  const views = ['viewHome','viewDetail','viewFree','viewLove','viewActive','viewEnd','viewFinisher','viewDone'];
+  const views = ['viewHome','viewDetail','viewFree','viewLove','viewWarmup','viewActive','viewEnd','viewFinisher','viewDone'];
   function showView(id) {
     views.forEach(v => document.getElementById(v).classList.toggle('active', v === id));
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -1270,6 +1343,8 @@
     const grid = document.getElementById('programGrid');
     grid.innerHTML = '';
     Object.values(PROGRAMS).forEach(p => {
+      const totalExos = p.blocks.reduce((s, b) => s + b.exercises.length, 0);
+      const duration = computeSeanceDuration(p);
       const btn = document.createElement('button');
       btn.className = 'program-card';
       btn.dataset.id = p.id;
@@ -1277,7 +1352,7 @@
         <div class="badge">${p.id}</div>
         <div class="info">
           <h3>Séance ${p.id} — ${p.title}</h3>
-          <p>${p.exercises.length} exercices · ${FORMAT.work}s/${FORMAT.rest}s · ${FORMAT.rounds} tours</p>
+          <p>${totalExos} exercices · 2 blocs · ~${fmtTime(duration)}</p>
         </div>
         <div class="arrow">→</div>`;
       btn.onclick = () => openDetail(p.id);
@@ -1290,58 +1365,82 @@
   // =========================================================
   let currentProgram = null;
 
+  function computeSeanceDuration(program) {
+    const seq = buildSeanceSequence(program);
+    return seq.reduce((sum, s) => sum + s.duration, 0);
+  }
+
   function openDetail(id, keepView) {
     currentProgram = PROGRAMS[id];
     document.getElementById('detailCode').textContent = 'SÉANCE ' + id;
     document.getElementById('detailName').textContent = currentProgram.title;
-    document.getElementById('metaWork').textContent   = FORMAT.work + 's';
-    document.getElementById('metaRest').textContent   = FORMAT.rest + 's';
-    document.getElementById('metaRounds').textContent = FORMAT.rounds;
 
-    // objectif optionnel
-    const objContainer = document.getElementById('objectiveContainer');
-    objContainer.dataset.seance = id;
-    if (currentProgram.objective && currentProgram.objective.length) {
-      objContainer.innerHTML = `
-        <div class="objective-card">
-          <h4>● Objectif de la séance</h4>
-          <ul>${currentProgram.objective.map(o => `<li>${o}</li>`).join('')}</ul>
-        </div>`;
-    } else {
-      objContainer.innerHTML = '';
-    }
+    document.querySelectorAll('#bloc2Toggle .toggle-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.tours) === bloc2Tours);
+    });
+
+    const totalExos = currentProgram.blocks.reduce((s, b) => s + b.exercises.length, 0);
+    const totalDuration = computeSeanceDuration(currentProgram);
+    document.getElementById('metaBlocs').textContent = currentProgram.blocks.length;
+    document.getElementById('metaExos').textContent  = totalExos;
+    document.getElementById('metaDuree').textContent = '~' + fmtTime(totalDuration);
 
     const list = document.getElementById('exerciseList');
     list.dataset.seance = id;
     list.innerHTML = '';
-    currentProgram.exercises.forEach((e, i) => {
-      const div = document.createElement('div');
-      div.className = 'exercise';
-      const cuesHtml = (e.cues && e.cues.length) ? `
-        <div class="cues">
-          <div class="cue-title">Exécution</div>
-          <ul>${e.cues.map(c => `<li>${c}</li>`).join('')}</ul>
-        </div>` : '';
-      div.innerHTML = `
-        <div class="icon-box">
-          <span class="num">${String(i+1).padStart(2,'0')}</span>
-          ${e.icon || ''}
-        </div>
-        <div>
-          <div class="name">${e.name}</div>
-          <div class="charge">${e.charge}</div>
-          <div class="desc">${e.desc}</div>
-          ${cuesHtml}
-        </div>`;
-      list.appendChild(div);
+
+    currentProgram.blocks.forEach((block, bIdx) => {
+      const tours = bIdx === 1 ? bloc2Tours : block.tours;
+
+      const header = document.createElement('div');
+      header.className = 'bloc-header';
+      header.innerHTML = `<span>${block.label}</span><strong>${tours} tours</strong>`;
+      list.appendChild(header);
+
+      if (id === 'C' && bIdx === 0) {
+        const note = document.createElement('p');
+        note.className = 'format-hint';
+        note.style.margin = '-4px 0 14px';
+        note.textContent = "Bloc unilatéral : chaque exercice compte deux séries déguisées en une (côté droit puis gauche) — il prend un peu plus de temps que le bloc 2.";
+        list.appendChild(note);
+      }
+
+      block.exercises.forEach((e, eIdx) => {
+        const div = document.createElement('div');
+        div.className = 'exercise';
+        const cuesHtml = (e.cues && e.cues.length) ? `
+          <div class="cues">
+            <div class="cue-title">Exécution</div>
+            <ul>${e.cues.map(c => `<li>${c}</li>`).join('')}</ul>
+          </div>` : '';
+        div.innerHTML = `
+          <div class="icon-box">
+            <span class="num">${posLabel(bIdx, eIdx)}</span>
+            ${e.icon || ''}
+          </div>
+          <div>
+            <div class="name">${e.name}</div>
+            <div class="pill-row">
+              <div class="charge">${e.charge}</div>
+              <div class="reps-tag">${e.reps}</div>
+            </div>
+            <div class="desc">${e.desc}</div>
+            ${cuesHtml}
+          </div>`;
+        list.appendChild(div);
+
+        const isLastInBlock = eIdx === block.exercises.length - 1;
+        const restDur  = isLastInBlock ? block.restBetweenTours : e.restAfterSec;
+        const restNote = isLastInBlock ? "avant le tour suivant" : "avant l'exercice suivant";
+        const divider = document.createElement('div');
+        divider.className = 'rest-divider';
+        divider.innerHTML = `↓ repos <strong>${restDur} s</strong> ${restNote}`;
+        list.appendChild(divider);
+      });
     });
 
-    // estimate
-    const n = currentProgram.exercises.length;
-    const perRound = n * FORMAT.work + (n - 1) * FORMAT.rest;
-    const total = perRound * FORMAT.rounds + FORMAT.rest * (FORMAT.rounds - 1);
-    document.getElementById('estTotal').textContent   = fmtTime(total);
-    document.getElementById('estSummary').textContent = `${FORMAT.rounds}× (${n} exos) · ${FORMAT.work}s/${FORMAT.rest}s`;
+    document.getElementById('estTotal').textContent = '~' + fmtTime(totalDuration);
+    document.getElementById('estSummary').textContent = `Bloc 1 ×${currentProgram.blocks[0].tours} tours · Bloc 2 ×${bloc2Tours} tours`;
 
     const startBtn = document.getElementById('startSeanceBtn');
     startBtn.className = 'start-btn' + (id === 'B' ? ' b' : id === 'C' ? ' c' : '');
@@ -1501,7 +1600,9 @@
   const progressFill = document.getElementById('progressFill');
   const pauseBtn     = document.getElementById('pauseBtn');
   const exoName      = document.getElementById('exoName');
+  const exoPos       = document.getElementById('exoPos');
   const exoCharge    = document.getElementById('exoCharge');
+  const exoReps      = document.getElementById('exoReps');
   const exoDesc      = document.getElementById('exoDesc');
   const exoCard      = document.getElementById('exoCard');
   const exoIcon      = document.getElementById('exoIcon');
@@ -1511,11 +1612,17 @@
     if (!cues || !cues.length) { exoCues.innerHTML = ''; return; }
     exoCues.innerHTML = cues.map(c => `<span class="cue-key">▸</span>${c}`).join(' &nbsp; ');
   }
+  function setExoPills(charge, reps) {
+    if (charge) { exoCharge.style.display = 'inline-block'; exoCharge.textContent = charge; }
+    else { exoCharge.style.display = 'none'; }
+    if (reps) { exoReps.style.display = 'inline-block'; exoReps.textContent = reps; }
+    else { exoReps.style.display = 'none'; }
+  }
   const upNext       = document.getElementById('upNext');
   const roundCur     = document.getElementById('roundCur');
   const roundTot     = document.getElementById('roundTot');
-  const exoCur       = document.getElementById('exoCur');
-  const exoTot       = document.getElementById('exoTot');
+  const blocCur      = document.getElementById('blocCur');
+  const blocTot      = document.getElementById('blocTot');
 
   let state = {
     mode: null,        // 'seance' | 'free'
@@ -1531,40 +1638,77 @@
   function stopAllTimers() {
     clearInterval(state.interval);
     clearInterval(finState.interval);
+    clearInterval(warmupState.interval);
     if (typeof loveTimer !== 'undefined') clearInterval(loveTimer);
     state.paused = false;
     releaseWakeLock();
   }
 
   // ---------- build sequence for a structured séance ----------
+  // Chaque bloc tourne en superset (1a → repos court → 1b → repos long → tour suivant).
+  // Le bloc 2 peut être raccourci à 2 tours (bloc2Tours) plutôt que de rogner les repos.
   function buildSeanceSequence(program) {
-    const seq = [];
-    seq.push({ type: 'ready', duration: 3 });
+    const seq = [{ type: 'ready', duration: 3 }];
+    const blocks = program.blocks;
 
-    for (let r = 1; r <= FORMAT.rounds; r++) {
-      program.exercises.forEach((exo, i) => {
-        seq.push({
-          type: 'work',
-          duration: FORMAT.work,
-          exo,
-          round: r,
-          exoIndex: i + 1
-        });
-        const isLastExoOfRound = (i === program.exercises.length - 1);
-        const isLastRound      = (r === FORMAT.rounds);
-        if (!(isLastExoOfRound && isLastRound)) {
-          // rest after every work, except the very last of the session
+    blocks.forEach((block, bIdx) => {
+      const tours = bIdx === 1 ? bloc2Tours : block.tours;
+
+      for (let r = 1; r <= tours; r++) {
+        block.exercises.forEach((exo, eIdx) => {
           seq.push({
-            type: 'rest',
-            duration: FORMAT.rest,
+            type: 'work',
+            duration: exo.workSec,
+            exo, block,
+            blockIndex: bIdx,
+            posIndex: eIdx,
             round: r,
-            // next exo (for "up next" display)
-            nextExo: isLastExoOfRound ? program.exercises[0] : program.exercises[i + 1],
-            nextRound: isLastExoOfRound ? r + 1 : r
+            totalRounds: tours
           });
-        }
-      });
-    }
+
+          const isLastExoInBlock = eIdx === block.exercises.length - 1;
+          const isLastRoundOfBlock = r === tours;
+          const isLastBlock = bIdx === blocks.length - 1;
+          const isVeryLastStep = isLastExoInBlock && isLastRoundOfBlock && isLastBlock;
+
+          if (!isVeryLastStep) {
+            let restDuration, nextExo, nextBlockIndex, nextPosIndex, nextRound;
+            let newBlock = false, newTour = false;
+
+            if (!isLastExoInBlock) {
+              restDuration  = exo.restAfterSec;
+              nextExo       = block.exercises[eIdx + 1];
+              nextBlockIndex = bIdx;
+              nextPosIndex  = eIdx + 1;
+              nextRound     = r;
+            } else {
+              restDuration = block.restBetweenTours;
+              if (isLastRoundOfBlock) {
+                newBlock = true;
+                nextBlockIndex = bIdx + 1;
+                nextPosIndex   = 0;
+                nextRound      = 1;
+                nextExo        = blocks[bIdx + 1].exercises[0];
+              } else {
+                newTour = true;
+                nextBlockIndex = bIdx;
+                nextPosIndex   = 0;
+                nextRound      = r + 1;
+                nextExo        = block.exercises[0];
+              }
+            }
+
+            seq.push({
+              type: 'rest',
+              duration: restDuration,
+              block, blockIndex: bIdx, round: r, totalRounds: tours,
+              nextExo, nextBlockIndex, nextPosIndex, nextRound, newBlock, newTour
+            });
+          }
+        });
+      }
+    });
+
     return seq;
   }
 
@@ -1593,15 +1737,12 @@
     state.idx = 0;
 
     document.getElementById('activeHeadLeft').textContent = 'SÉANCE ' + currentProgram.id;
-    roundTot.textContent = FORMAT.rounds;
-    roundCur.textContent = 1;
-    exoTot.textContent   = currentProgram.exercises.length;
-    exoCur.textContent   = 1;
+    document.querySelector('.pill.exo').style.display = '';
     document.getElementById('headerTag').textContent = 'Séance ' + currentProgram.id + ' en cours';
     pauseBtn.textContent = 'PAUSE';
     state.paused = false;
 
-    // message d'amour avant de lancer le timer
+    // message d'amour, puis échauffement, avant de lancer le timer
     showLoveScreen();
   }
 
@@ -1616,7 +1757,7 @@
       count--;
       if (count <= 0) {
         clearInterval(loveTimer);
-        startActualWorkout();
+        startWarmup();
       } else {
         document.getElementById('loveCount').textContent = count;
       }
@@ -1624,7 +1765,7 @@
   }
   function skipLove() {
     clearInterval(loveTimer);
-    startActualWorkout();
+    startWarmup();
   }
   function startActualWorkout() {
     showView('viewActive');
@@ -1645,6 +1786,7 @@
     state.idx = 0;
 
     document.getElementById('activeHeadLeft').textContent = 'CHRONO LIBRE';
+    document.querySelector('.pill.exo').style.display = 'none';
     roundTot.textContent = reps;
     roundCur.textContent = 1;
     document.getElementById('headerTag').textContent = 'Chrono en cours';
@@ -1671,28 +1813,27 @@
     // seance color context for svg weights
     exoCard.dataset.seance = state.program ? state.program.id : '';
 
-    // seance color context for svg weights
-    exoCard.dataset.seance = state.program ? state.program.id : '';
-
     if (step.type === 'ready') {
       phaseLabel.textContent = 'PRÊT ?';
       if (state.mode === 'seance') {
-        const first = state.program.exercises[0];
-        const total = state.program.exercises.length;
+        const block = state.program.blocks[0];
+        const first = block.exercises[0];
         exoIcon.innerHTML    = first.icon || '';
+        exoPos.textContent   = posLabel(0, 0);
         exoName.textContent  = 'À suivre : ' + first.name;
-        exoCharge.style.display = 'inline-block';
-        exoCharge.textContent = first.charge;
+        setExoPills(first.charge, first.reps);
         exoDesc.textContent = first.desc;
         renderCues(first.cues);
-        exoCur.textContent = 1;
-        exoTot.textContent = total;
+        blocCur.textContent = 1;
+        blocTot.textContent = state.program.blocks.length;
         roundCur.textContent = 1;
-        upNext.innerHTML = `Tour <strong>1</strong>/${FORMAT.rounds} — 1er exercice dans 3…`;
+        roundTot.textContent = block.tours;
+        upNext.innerHTML = `Bloc <strong>1</strong> — Tour <strong>1</strong>/${block.tours} — 1er exercice dans 3…`;
       } else {
         exoIcon.innerHTML    = '';
+        exoPos.textContent   = '';
         exoName.textContent  = 'Préparez-vous';
-        exoCharge.style.display = 'none';
+        setExoPills(null, null);
         exoDesc.textContent  = state.sequence[1] ? `Travail ${state.sequence[1].duration}s` : '';
         renderCues(null);
         upNext.innerHTML = '';
@@ -1703,16 +1844,17 @@
       phaseLabel.textContent = 'GO !';
       beepWorkStart();
       if (step.exo) {
-        const total = state.program.exercises.length;
         exoIcon.innerHTML    = step.exo.icon || '';
+        exoPos.textContent   = posLabel(step.blockIndex, step.posIndex);
         exoName.textContent  = step.exo.name;
-        exoCharge.style.display = 'inline-block';
-        exoCharge.textContent = step.exo.charge;
+        setExoPills(step.exo.charge, step.exo.reps);
         exoDesc.textContent  = step.exo.desc;
         renderCues(step.exo.cues);
+        blocCur.textContent  = step.blockIndex + 1;
+        blocTot.textContent  = state.program.blocks.length;
         roundCur.textContent = step.round;
-        exoCur.textContent   = step.exoIndex;
-        exoTot.textContent   = total;
+        roundTot.textContent = step.totalRounds;
+
         const next = state.sequence[state.idx + 1];
         if (next && next.type === 'rest' && next.nextExo) {
           upNext.innerHTML = `Suivant : <strong>${next.nextExo.name}</strong>`;
@@ -1723,8 +1865,9 @@
         }
       } else if (step.free) {
         exoIcon.innerHTML    = '';
+        exoPos.textContent   = '';
         exoName.textContent   = 'TRAVAIL';
-        exoCharge.style.display = 'none';
+        setExoPills(null, null);
         exoDesc.textContent   = `Série ${step.repIndex} / ${step.repTotal}`;
         renderCues(null);
         roundCur.textContent  = step.repIndex;
@@ -1737,18 +1880,23 @@
       beepRestStart();
       if (step.nextExo) {
         exoIcon.innerHTML    = step.nextExo.icon || '';
+        exoPos.textContent   = posLabel(step.nextBlockIndex, step.nextPosIndex);
         exoName.textContent  = 'Prochain : ' + step.nextExo.name;
-        exoCharge.style.display = 'inline-block';
-        exoCharge.textContent = step.nextExo.charge;
+        setExoPills(step.nextExo.charge, step.nextExo.reps);
         exoDesc.textContent  = step.nextExo.desc;
         renderCues(step.nextExo.cues);
-        const newRound = step.nextRound !== step.round;
-        upNext.innerHTML = newRound
-          ? `Nouveau tour → <strong>Tour ${step.nextRound}/${FORMAT.rounds}</strong>` : '';
+        if (step.newBlock) {
+          upNext.innerHTML = `Bloc suivant → <strong>BLOC ${step.nextBlockIndex + 1}</strong>`;
+        } else if (step.newTour) {
+          upNext.innerHTML = `Nouveau tour → <strong>Tour ${step.nextRound}/${step.totalRounds}</strong>`;
+        } else {
+          upNext.innerHTML = '';
+        }
       } else {
         exoIcon.innerHTML    = '';
+        exoPos.textContent   = '';
         exoName.textContent = 'Récupération';
-        exoCharge.style.display = 'none';
+        setExoPills(null, null);
         exoDesc.textContent = 'Respire, bois un peu d\'eau.';
         renderCues(null);
         upNext.innerHTML = '';
@@ -1770,6 +1918,12 @@
       if (state.paused) return;
       state.remaining--;
       updateDisplay();
+
+      const step = state.sequence[state.idx];
+      if (step.type === 'work' && step.exo && step.exo.switchAtSec) {
+        const elapsed = state.phaseTotal - state.remaining;
+        if (elapsed === step.exo.switchAtSec) beepSoft();
+      }
 
       if (state.remaining > 0 && state.remaining <= 3) {
         beepCountdown();
@@ -1812,6 +1966,84 @@
     if (!confirm('Arrêter la séance en cours ?')) return;
     stopAllTimers();
     goHome();
+  }
+
+  // =========================================================
+  // WARM-UP — 7 étapes guidées avant chaque séance (~3 min)
+  // Pas d'étirement statique : on monte en température, on ouvre
+  // hanches et épaules, et on répète le 1er mouvement de la séance
+  // pour préparer le schéma moteur exact (le plus souvent sauté).
+  // =========================================================
+  let warmupState = { seq: [], idx: 0, remaining: 0, phaseTotal: 0, interval: null };
+
+  function buildWarmupSequence(program) {
+    const firstExo = program.blocks[0].exercises[0];
+    return [
+      { name: 'Montées de genoux', desc: 'Ou pas chassés sur place, rythme modéré.', dur: 30 },
+      { name: 'Cercles de bras — arrière', desc: '10 cercles, amplitude complète.', dur: 15 },
+      { name: 'Cercles de bras — avant', desc: '10 cercles, amplitude complète.', dur: 15 },
+      { name: 'Rotations de bassin', desc: '5 dans un sens, puis 5 dans l\'autre.', dur: 20 },
+      { name: 'Squats à vide', desc: '10 reps, descends progressivement plus bas.', dur: 30 },
+      { name: 'Charnières de hanche à vide', desc: '8 reps — mouvement du RDL, mains sur les cuisses.', dur: 25 },
+      { name: 'Série d\'approche', desc: `${firstExo.name} — 8 reps à vide ou avec l'haltère de 6 kg.`, dur: 30 }
+    ];
+  }
+
+  function startWarmup() {
+    warmupState.seq = buildWarmupSequence(state.program);
+    warmupState.idx = 0;
+    document.getElementById('warmupTot').textContent = warmupState.seq.length;
+    document.getElementById('headerTag').textContent = 'Échauffement';
+    showView('viewWarmup');
+    enterWarmupStep();
+    runWarmupTimer();
+  }
+
+  function enterWarmupStep() {
+    const s = warmupState.seq[warmupState.idx];
+    warmupState.remaining  = s.dur;
+    warmupState.phaseTotal = s.dur;
+    document.getElementById('warmupCur').textContent = warmupState.idx + 1;
+    document.getElementById('warmupName').textContent = s.name;
+    document.getElementById('warmupDesc').textContent = s.desc;
+    beepSoft();
+    updateWarmupDisplay();
+  }
+
+  function updateWarmupDisplay() {
+    document.getElementById('warmupTime').textContent = warmupState.remaining;
+    const pct = warmupState.phaseTotal > 0 ? ((warmupState.phaseTotal - warmupState.remaining) / warmupState.phaseTotal) * 100 : 0;
+    document.getElementById('warmupProgress').style.width = pct + '%';
+  }
+
+  function runWarmupTimer() {
+    clearInterval(warmupState.interval);
+    warmupState.interval = setInterval(() => {
+      warmupState.remaining--;
+      updateWarmupDisplay();
+      if (warmupState.remaining > 0 && warmupState.remaining <= 3) beepCountdown();
+      if (warmupState.remaining <= 0) advanceWarmupStep();
+    }, 1000);
+  }
+
+  function advanceWarmupStep() {
+    warmupState.idx++;
+    if (warmupState.idx >= warmupState.seq.length) {
+      finishWarmup();
+      return;
+    }
+    enterWarmupStep();
+  }
+
+  function finishWarmup() {
+    clearInterval(warmupState.interval);
+    beepFinish();
+    startActualWorkout();
+  }
+
+  function skipWarmup() {
+    clearInterval(warmupState.interval);
+    startActualWorkout();
   }
 
   // =========================================================
@@ -1953,6 +2185,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' &&
         (document.getElementById('viewActive').classList.contains('active') ||
+         document.getElementById('viewWarmup').classList.contains('active') ||
          document.getElementById('viewFinisher').classList.contains('active'))) {
       requestWakeLock();
     }
