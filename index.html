@@ -270,6 +270,49 @@
 
   .exercise-list { margin-bottom: 24px; }
 
+  .warmup-list {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .warmup-step {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .warmup-step:last-child { border-bottom: none; }
+  .warmup-step .idx {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--muted);
+    min-width: 20px;
+  }
+  .warmup-step .body { flex: 1; }
+  .warmup-step .name {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .warmup-step .desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .warmup-step .dur {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    border: 1px solid var(--line);
+    padding: 2px 7px;
+    white-space: nowrap;
+    align-self: center;
+  }
+
   .bloc-header {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -966,6 +1009,10 @@
       <div class="cell"><div class="k">Durée</div><div class="v" id="metaDuree">—</div></div>
     </div>
 
+    <div class="section-title" id="warmupTitle">Échauffement</div>
+    <p class="format-hint" style="margin-top:-10px;">Pas d'étirement statique avant l'effort — ça réduit la production de force. On monte en température, on ouvre hanches et épaules.</p>
+    <div class="warmup-list" id="warmupList"></div>
+
     <div class="section-title">Exercices</div>
     <div class="exercise-list" id="exerciseList"></div>
 
@@ -1384,6 +1431,24 @@
     document.getElementById('metaBlocs').textContent = currentProgram.blocks.length;
     document.getElementById('metaExos').textContent  = totalExos;
     document.getElementById('metaDuree').textContent = '~' + fmtTime(totalDuration);
+
+    const warmupSeq = buildWarmupSequence(currentProgram);
+    const warmupTotalSec = warmupSeq.reduce((s, w) => s + w.dur, 0);
+    document.getElementById('warmupTitle').textContent = 'Échauffement — ~' + fmtTime(warmupTotalSec);
+    const warmupListEl = document.getElementById('warmupList');
+    warmupListEl.innerHTML = '';
+    warmupSeq.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'warmup-step';
+      row.innerHTML = `
+        <div class="idx">${i + 1}</div>
+        <div class="body">
+          <div class="name">${s.name}</div>
+          <div class="desc">${s.desc}</div>
+        </div>
+        <div class="dur">${s.dur}s</div>`;
+      warmupListEl.appendChild(row);
+    });
 
     const list = document.getElementById('exerciseList');
     list.dataset.seance = id;
