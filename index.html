@@ -1580,7 +1580,11 @@
     osc.start();
     osc.stop(audioCtx.currentTime + duration);
   }
-  const beepCountdown = () => beep(880, 0.18, 'square', 0.6);
+  const beepCountdown = (n) => {
+    // "tut tut tut" — court et sec, ton qui monte à l'approche de 0
+    const freq = n === 1 ? 1050 : n === 2 ? 880 : 720;
+    beep(freq, 0.1, 'square', 0.75);
+  };
   const beepWorkStart = () => {
     beep(1000, 0.28, 'square', 0.8);
     setTimeout(() => beep(1300, 0.35, 'square', 0.8), 180);
@@ -1991,7 +1995,7 @@
       }
 
       if (state.remaining > 0 && state.remaining <= 3) {
-        beepCountdown();
+        beepCountdown(state.remaining);
         timeDisplay.classList.remove('pulse');
         void timeDisplay.offsetWidth;
         timeDisplay.classList.add('pulse');
@@ -2086,7 +2090,7 @@
     warmupState.interval = setInterval(() => {
       warmupState.remaining--;
       updateWarmupDisplay();
-      if (warmupState.remaining > 0 && warmupState.remaining <= 3) beepCountdown();
+      if (warmupState.remaining > 0 && warmupState.remaining <= 3) beepCountdown(warmupState.remaining);
       if (warmupState.remaining <= 0) advanceWarmupStep();
     }, 1000);
   }
@@ -2206,7 +2210,7 @@
       const s = finSequence[finState.idx];
       // countdown beeps only for vacuum holds (not during breathing, too noisy)
       if ((s.kind === 'vacuum' || s.kind === 'vacuum-rest') && finState.remaining > 0 && finState.remaining <= 3) {
-        beepCountdown();
+        beepCountdown(finState.remaining);
       }
       if (finState.remaining <= 0) advanceFinStep();
     }, 1000);
